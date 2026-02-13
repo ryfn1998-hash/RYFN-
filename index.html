@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: #0d1117; color: #c9d1d9; font-family: sans-serif; }
+        body { background-color: #0d1117; color: #c9d1d9; font-family: sans-serif; line-height: 1.5; }
 
         /* 頂部亮綠色導覽列 */
         .navbar {
@@ -29,6 +29,8 @@
             text-align: center;
             background: radial-gradient(circle at 50% 50%, #1a2e1a 0%, #0d1117 100%);
         }
+
+        /* --- 視覺效果強化：複製卡片 --- */
         .copy-card {
             background: linear-gradient(145deg, #238636, #2ea043);
             border-radius: 12px;
@@ -37,13 +39,40 @@
             margin: 20px auto;
             cursor: pointer;
             box-shadow: 0 0 20px rgba(63, 185, 80, 0.4);
-            transition: 0.3s;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            user-select: none;
         }
-        .copy-card:hover { transform: translateY(-5px); }
-        .ip-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin: 10px 0; font-family: monospace; font-size: 1.2rem; }
+        
+        /* 懸浮效果 */
+        .copy-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 0 30px rgba(63, 185, 80, 0.6);
+        }
 
-        /* 介紹區塊設定 */
-        .section-title { text-align: center; color: #3fb950; margin: 40px 0 20px; font-size: 1.8rem; }
+        /* 點擊瞬間的縮放效果 */
+        .copy-card:active {
+            transform: scale(0.92);
+            filter: brightness(1.2);
+        }
+
+        /* 點擊產生的擴散光圈 (透過 JS 控制) */
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple-animation {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        .ip-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin: 10px 0; font-family: monospace; font-size: 1.2rem; color: #fff; }
+
+        /* 介紹區塊 */
         .intro-container {
             background: #fff;
             padding: 60px 5%;
@@ -64,8 +93,6 @@
         }
         .item:hover { transform: translateY(-5px); }
         .item i { font-size: 2.5rem; color: #3fb950; margin-bottom: 20px; }
-        .item h3 { margin-bottom: 10px; font-size: 1.3rem; }
-        .item p { color: #57606a; font-size: 0.9rem; line-height: 1.6; }
 
         /* 右下角懸浮按鈕 */
         .float-btns {
@@ -97,13 +124,16 @@
         }
         .copyright { color: #484f58; font-size: 0.8rem; margin-top: 20px; }
 
+        /* 複製提示 (Toast) */
         #toast {
-            visibility: hidden; background: #238636; color: #fff;
-            padding: 12px 25px; border-radius: 8px; position: fixed;
-            bottom: 40px; left: 50%; transform: translateX(-50%);
-            font-weight: bold; z-index: 10000;
+            visibility: hidden; background: #3fb950; color: #000;
+            padding: 12px 25px; border-radius: 30px; position: fixed;
+            bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px);
+            font-weight: bold; z-index: 10000; opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        #toast.show { visibility: visible; }
+        #toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
@@ -115,34 +145,19 @@
 
     <div class="hero">
         <h1>探索無限可能的方塊世界</h1>
-        <div class="copy-card" onclick="copyIP('ryfn.falix.gg')">
+        
+        <div class="copy-card" id="ipCard" onclick="handleCopy(event, 'ryfn.falix.gg')">
             <strong>Java Edition (PC)</strong>
             <div class="ip-box">ryfn.falix.gg</div>
-            <p style="font-size:0.8rem; opacity: 0.8;">點擊複製 IP</p>
+            <p style="font-size:0.8rem; opacity: 0.9;">點擊複製 IP 加入遊戲</p>
         </div>
     </div>
 
     <div class="intro-container">
-        <div class="item">
-            <i class="fas fa-network-wired"></i>
-            <h3>多版本相容</h3>
-            <p>支援 ViaVersion、ViaBackwards 與 ViaRewind，無論是最新版還是舊版本玩家皆可輕鬆連線。</p>
-        </div>
-        <div class="item">
-            <i class="fab fa-discord"></i>
-            <h3>Discord 同步</h3>
-            <p>遊戲內聊天與 Discord 即時雙向同步，讓你隨時隨地與伺服器隊友保持聯繫。</p>
-        </div>
-        <div class="item">
-            <i class="fas fa-user-shield"></i>
-            <h3>離線PIN登入系統</h3>
-            <p>友善的離線登入機制，確保每位玩家的帳號安全，同時兼顧遊玩的便利性。</p>
-        </div>
-        <div class="item">
-            <i class="fas fa-shield-alt"></i>
-            <h3>穩定運行</h3>
-            <p>高品質主機 24/7 運行，提供流暢的遊戲體驗，杜絕斷線煩惱。</p>
-        </div>
+        <div class="item"><i class="fas fa-map-marker-alt"></i><h3>TPA 玩家傳送</h3><p>隨時隨地與好友相聚。</p></div>
+        <div class="item"><i class="fas fa-user-check"></i><h3>高效反作弊</h3><p>保證絕對公平的競技環境。</p></div>
+        <div class="item"><i class="fas fa-network-wired"></i><h3>多版本相容</h3><p>支援 ViaVersion 系列模組。</p></div>
+        <div class="item"><i class="fab fa-discord"></i><h3>Discord 同步</h3><p>聊天室即時雙向連動。</p></div>
     </div>
 
     <div class="float-btns">
@@ -159,15 +174,32 @@
         <p class="copyright">© 2025-2026 Minecraft | 星河伺服器. 版權所有.</p>
     </footer>
 
-    <div id="toast">✅ IP 已複製！</div>
+    <div id="toast">✅ IP 複製成功，快去加入吧！</div>
 
     <script>
-        function copyIP(text) {
-            navigator.clipboard.writeText(text).then(function() {
-                var x = document.getElementById("toast");
-                x.className = "show";
-                setTimeout(function(){ x.className = ""; }, 2000);
-            });
+        function handleCopy(event, text) {
+            // 1. 複製文字
+            navigator.clipboard.writeText(text);
+
+            // 2. 產出點擊擴散效果 (Ripple)
+            const card = event.currentTarget;
+            const circle = document.createElement("span");
+            const diameter = Math.max(card.clientWidth, card.clientHeight);
+            const radius = diameter / 2;
+
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - card.offsetLeft - radius}px`;
+            circle.style.top = `${event.clientY - card.offsetTop - radius}px`;
+            circle.classList.add("ripple");
+
+            const ripple = card.getElementsByClassName("ripple")[0];
+            if (ripple) { ripple.remove(); }
+            card.appendChild(circle);
+
+            // 3. 顯示 Toast 提示
+            var x = document.getElementById("toast");
+            x.className = "show";
+            setTimeout(function(){ x.className = ""; }, 2500);
         }
     </script>
 </body>
