@@ -64,105 +64,11 @@
             50% { transform: translate(-2px, -1px); }
             100% { transform: translate(1px, 1px); }
         }
-
-        /* ---------------------------------
-           新增：6 個介紹卡片樣式
-        ---------------------------------- */
-        .container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 50; /* 位於粒子之上 */
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            width: 90%;
-            max-width: 1100px;
-            pointer-events: none; /* 讓點擊能穿透到背景觸發粒子 */
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(188, 19, 254, 0.3);
-            border-radius: 15px;
-            padding: 30px 20px;
-            text-align: center;
-            color: white;
-            pointer-events: auto; /* 恢復卡片自身的觸動 */
-            transition: 0.3s;
-        }
-
-        .card:hover {
-            background: rgba(188, 19, 254, 0.1);
-            border-color: var(--neon-purple);
-            transform: translateY(-5px);
-        }
-
-        .card-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .card h3 {
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            color: var(--neon-purple);
-        }
-
-        .card p {
-            font-size: 0.9rem;
-            color: #ccc;
-            line-height: 1.5;
-        }
-
-        @media (max-width: 850px) {
-            .container { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 500px) {
-            .container { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body id="body">
 
     <canvas id="stage"></canvas>
-
-    <div class="container">
-        <div class="card">
-            <span class="card-icon">📍</span>
-            <h3>TPA 傳送</h3>
-            <p>隨時隨地與好友相聚。</p>
-        </div>
-        <div class="card">
-            <span class="card-icon">🛡️</span>
-            <h3>高效反作弊</h3>
-            <p>保證公平的競技環境。</p>
-        </div>
-        <div class="card">
-            <span class="card-icon">🔗</span>
-            <h3>多版本相容</h3>
-            <p>支援多種客戶端連入。</p>
-        </div>
-        <div class="card">
-            <span class="card-icon">💬</span>
-            <h3>Discord 同步</h3>
-            <p>聊天室即時雙向連動。</p>
-        </div>
-        <div class="card">
-            <span class="card-icon">⚡</span>
-            <h3>極速硬體</h3>
-            <p>頂級配置，穩定無延遲。</p>
-        </div>
-        <div class="card">
-            <span class="card-icon">⚙️</span>
-            <h3>專屬指令</h3>
-            <p>獨家功能，提升遊戲體驗。</p>
-        </div>
-    </div>
 
     <script>
         const canvas = document.getElementById('stage');
@@ -206,6 +112,7 @@
             }
 
             update() {
+                // 向觸控點匯聚的引力
                 touchPoints.forEach(p => {
                     const dx = p.x - this.x;
                     const dy = p.y - this.y;
@@ -225,6 +132,7 @@
         }
 
         function createDenseExplosion(x, y) {
+            // 觸發螢幕抖動
             body.classList.add('shake');
             setTimeout(() => body.classList.remove('shake'), 200);
 
@@ -239,6 +147,7 @@
             const touches = e.touches ? Array.from(e.touches) : [e];
             touches.forEach(t => {
                 touchPoints.push({ x: t.clientX, y: t.clientY });
+                // 持續產生高密度流光
                 for(let i=0; i<3; i++) {
                     particles.push(new Particle(t.clientX, t.clientY, '#bc13fe'));
                 }
@@ -255,11 +164,13 @@
         });
 
         window.addEventListener('touchstart', (e) => {
+            e.preventDefault();
             updateTouchPoints(e);
             createDenseExplosion(e.touches[0].clientX, e.touches[0].clientY);
         }, { passive: false });
 
         window.addEventListener('touchmove', (e) => {
+            e.preventDefault();
             updateTouchPoints(e);
         }, { passive: false });
 
@@ -267,14 +178,16 @@
         window.addEventListener('mouseup', () => touchPoints = []);
 
         function animate() {
+            // 設置為 lighter 模式會讓粒子重疊處變亮，看起來更震撼
             ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
             ctx.fillRect(0, 0, width, height);
             
             ctx.globalCompositeOperation = 'lighter';
 
+            // 繪製粒子間的神經元連線
             ctx.lineWidth = 0.5;
-            for (let i = 0; i < particles.length; i += 2) {
+            for (let i = 0; i < particles.length; i += 2) { // 抽樣連線以保持效能
                 for (let j = i + 1; j < particles.length; j += 5) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
