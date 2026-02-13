@@ -3,40 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>星河伺服器</title>
+    <title>PLASMA OVERLOAD</title>
     <style>
-        /* 基礎樣式：完全復原圖片中的視覺感 */
         :root {
-            --server-green: #2dbd4a; /* 原圖標題綠色 */
+            --neon-purple: #bc13fe;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, "Microsoft JhengHei", sans-serif;
+            overflow: hidden;
+            touch-action: none;
             user-select: none;
         }
 
         body {
-            background-color: #f4f4f4;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            position: relative;
+            background-color: #000;
+            height: 100vh;
+            width: 100vw;
         }
 
-        /* 紫色霓虹流動邊框：應要求加入，僅限最邊緣 */
+        /* 強化的紫色霓虹流動邊框 */
         body::after {
             content: '';
             position: fixed;
             inset: 0;
-            border: 4px solid transparent;
-            border-image: conic-gradient(from var(--angle), transparent, #bc13fe, transparent, #bc13fe, transparent) 1;
-            z-index: 9999;
+            border: 8px solid transparent;
+            border-image: conic-gradient(from var(--angle), transparent, var(--neon-purple), #ff00ff, var(--neon-purple), transparent) 1;
+            z-index: 100;
             pointer-events: none;
-            animation: rotateGradient 4s linear infinite;
+            filter: drop-shadow(0 0 25px var(--neon-purple));
+            animation: rotateGradient 1.5s linear infinite;
         }
 
         @property --angle {
@@ -45,203 +43,264 @@
             inherits: false;
         }
 
-        @keyframes rotateGradient { to { --angle: 360deg; } }
+        @keyframes rotateGradient {
+            to { --angle: 360deg; }
+        }
 
-        /* 背景畫布：圓潤光影 */
         canvas {
             position: fixed;
             top: 0;
             left: 0;
-            z-index: 0;
-            pointer-events: none;
+            z-index: 1;
         }
 
-        /* 標題列：完全復原圖片樣式 */
-        .header {
-            background-color: var(--server-green);
-            padding: 20px 5%;
-            color: white;
-            display: flex;
-            align-items: center;
-            font-size: 1.25rem;
-            font-weight: bold;
-            z-index: 10;
+        /* 當能量爆發時的螢幕抖動效果 */
+        .shake {
+            animation: shakeAnim 0.1s infinite;
         }
 
-        .header-icon {
-            width: 28px;
-            height: 28px;
-            background: #000;
-            margin-right: 12px;
-            border-radius: 6px;
+        @keyframes shakeAnim {
+            0% { transform: translate(1px, 1px); }
+            50% { transform: translate(-2px, -1px); }
+            100% { transform: translate(1px, 1px); }
         }
 
-        /* 內容區塊 */
-        .content {
-            position: relative;
-            z-index: 10;
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-        }
-
-        /* 卡片網格：湊齊六個 */
-        .grid {
+        /* ---------------------------------
+           新增：6 個介紹卡片樣式
+        ---------------------------------- */
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50; /* 位於粒子之上 */
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
+            width: 90%;
             max-width: 1100px;
-            width: 100%;
+            pointer-events: none; /* 讓點擊能穿透到背景觸發粒子 */
         }
 
-        @media (max-width: 900px) {
-            .grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 600px) {
-            .grid { grid-template-columns: 1fr; }
-        }
-
-        /* 卡片設計：完全復原圖片中的圓潤與陰影 */
         .card {
-            background: white;
-            border-radius: 12px;
-            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(188, 19, 254, 0.3);
+            border-radius: 15px;
+            padding: 30px 20px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-            cursor: pointer;
+            color: white;
+            pointer-events: auto; /* 恢復卡片自身的觸動 */
+            transition: 0.3s;
         }
 
         .card:hover {
+            background: rgba(188, 19, 254, 0.1);
+            border-color: var(--neon-purple);
             transform: translateY(-5px);
         }
 
         .card-icon {
-            font-size: 45px;
+            font-size: 40px;
             margin-bottom: 15px;
             display: block;
         }
 
         .card h3 {
-            color: #333;
             margin-bottom: 10px;
             font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: var(--neon-purple);
         }
 
         .card p {
-            color: #777;
-            font-size: 0.95rem;
-            line-height: 1.6;
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.5;
         }
 
-        .footer {
-            text-align: center;
-            padding: 40px;
-            color: #333;
-            font-weight: bold;
-            z-index: 10;
+        @media (max-width: 850px) {
+            .container { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 500px) {
+            .container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
-<body>
+<body id="body">
 
-    <canvas id="canvas"></canvas>
+    <canvas id="stage"></canvas>
 
-    <header class="header">
-        <div class="header-icon"></div> 星河伺服器
-    </header>
-
-    <main class="content">
-        <div class="grid">
-            <div class="card">
-                <span class="card-icon">📍</span>
-                <h3>TPA 玩家傳送</h3>
-                <p>隨時隨地與好友相聚。</p>
-            </div>
-            <div class="card">
-                <span class="card-icon">👤</span>
-                <h3>高效反作弊</h3>
-                <p>保證絕對公平的競技環境。</p>
-            </div>
-            <div class="card">
-                <span class="card-icon">🔗</span>
-                <h3>多版本相容</h3>
-                <p>支援 ViaVersion 系列模組。</p>
-            </div>
-            <div class="card">
-                <span class="card-icon">💬</span>
-                <h3>Discord 同步</h3>
-                <p>聊天室即時雙向連動。</p>
-            </div>
-            <div class="card">
-                <span class="card-icon">⚡</span>
-                <h3>極速硬體</h3>
-                <p>採用頂級配置，極致流暢。</p>
-            </div>
-            <div class="card">
-                <span class="card-icon">🛠️</span>
-                <h3>專屬指令</h3>
-                <p>多樣化原創功能，提升體驗。</p>
-            </div>
+    <div class="container">
+        <div class="card">
+            <span class="card-icon">📍</span>
+            <h3>TPA 傳送</h3>
+            <p>隨時隨地與好友相聚。</p>
         </div>
-    </main>
-
-    <div class="footer">加入我們的社群</div>
+        <div class="card">
+            <span class="card-icon">🛡️</span>
+            <h3>高效反作弊</h3>
+            <p>保證公平的競技環境。</p>
+        </div>
+        <div class="card">
+            <span class="card-icon">🔗</span>
+            <h3>多版本相容</h3>
+            <p>支援多種客戶端連入。</p>
+        </div>
+        <div class="card">
+            <span class="card-icon">💬</span>
+            <h3>Discord 同步</h3>
+            <p>聊天室即時雙向連動。</p>
+        </div>
+        <div class="card">
+            <span class="card-icon">⚡</span>
+            <h3>極速硬體</h3>
+            <p>頂級配置，穩定無延遲。</p>
+        </div>
+        <div class="card">
+            <span class="card-icon">⚙️</span>
+            <h3>專屬指令</h3>
+            <p>獨家功能，提升遊戲體驗。</p>
+        </div>
+    </div>
 
     <script>
-        const canvas = document.getElementById('canvas');
+        const canvas = document.getElementById('stage');
         const ctx = canvas.getContext('2d');
-        let ripples = [];
+        const body = document.getElementById('body');
+        
         let width, height;
+        let particles = [];
+        let touchPoints = [];
 
         function resize() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
         }
+
         window.addEventListener('resize', resize);
         resize();
 
-        class Ripple {
-            constructor(x, y) {
+        class Particle {
+            constructor(x, y, color) {
                 this.x = x;
                 this.y = y;
-                this.r = 0;
-                this.opacity = 0.5;
+                this.vx = (Math.random() - 0.5) * 10;
+                this.vy = (Math.random() - 0.5) * 10;
+                this.size = Math.random() * 3 + 1;
+                this.color = color;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.005;
             }
-            update() {
-                this.r += 3; // 圓潤擴散速度
-                this.opacity -= 0.01;
-            }
+
             draw() {
                 ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fillStyle = this.color;
                 ctx.beginPath();
-                // 圓潤的漸層光暈
-                let g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r);
-                g.addColorStop(0, `rgba(188, 19, 254, 0)`);
-                g.addColorStop(0.8, `rgba(188, 19, 254, ${this.opacity})`);
-                g.addColorStop(1, `rgba(188, 19, 254, 0)`);
-                ctx.fillStyle = g;
-                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.restore();
             }
+
+            update() {
+                touchPoints.forEach(p => {
+                    const dx = p.x - this.x;
+                    const dy = p.y - this.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 300) {
+                        this.vx += dx * 0.005;
+                        this.vy += dy * 0.005;
+                    }
+                });
+
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vx *= 0.96;
+                this.vy *= 0.96;
+                this.alpha -= this.decay;
+            }
         }
 
-        window.addEventListener('click', (e) => {
-            ripples.push(new Ripple(e.clientX, e.clientY));
+        function createDenseExplosion(x, y) {
+            body.classList.add('shake');
+            setTimeout(() => body.classList.remove('shake'), 200);
+
+            for (let i = 0; i < 60; i++) {
+                const color = Math.random() > 0.3 ? '#bc13fe' : '#ffffff';
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function updateTouchPoints(e) {
+            touchPoints = [];
+            const touches = e.touches ? Array.from(e.touches) : [e];
+            touches.forEach(t => {
+                touchPoints.push({ x: t.clientX, y: t.clientY });
+                for(let i=0; i<3; i++) {
+                    particles.push(new Particle(t.clientX, t.clientY, '#bc13fe'));
+                }
+            });
+        }
+
+        window.addEventListener('mousedown', (e) => {
+            updateTouchPoints(e);
+            createDenseExplosion(e.clientX, e.clientY);
         });
 
+        window.addEventListener('mousemove', (e) => {
+            if (e.buttons > 0) updateTouchPoints(e);
+        });
+
+        window.addEventListener('touchstart', (e) => {
+            updateTouchPoints(e);
+            createDenseExplosion(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            updateTouchPoints(e);
+        }, { passive: false });
+
+        window.addEventListener('touchend', () => touchPoints = []);
+        window.addEventListener('mouseup', () => touchPoints = []);
+
         function animate() {
-            ctx.clearRect(0, 0, width, height);
-            ripples.forEach((r, i) => {
-                r.update();
-                r.draw();
-                if (r.opacity <= 0) ripples.splice(i, 1);
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+            ctx.fillRect(0, 0, width, height);
+            
+            ctx.globalCompositeOperation = 'lighter';
+
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i < particles.length; i += 2) {
+                for (let j = i + 1; j < particles.length; j += 5) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 80) {
+                        ctx.strokeStyle = `rgba(188, 19, 254, ${particles[i].alpha * 0.5})`;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            particles.forEach((p, index) => {
+                if (p.alpha <= 0) {
+                    particles.splice(index, 1);
+                } else {
+                    p.update();
+                    p.draw();
+                }
             });
+
             requestAnimationFrame(animate);
         }
+
         animate();
     </script>
 </body>
