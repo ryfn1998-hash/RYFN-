@@ -1,206 +1,250 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星河伺服器 - 帝國永續發展</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>星河伺服器 - 核心終端</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: #0d1117; color: #c9d1d9; font-family: sans-serif; line-height: 1.5; }
-
-        /* 頂部亮綠色導覽列 */
-        .navbar {
-            background-color: #3fb950 !important;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            padding: 0 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        .cube-icon { font-size: 1.6rem; color: #000; margin-right: 12px; }
-        .brand { color: #000; font-size: 1.3rem; font-weight: bold; }
-
-        /* 主視覺區 */
-        .hero {
-            padding: 60px 20px;
-            text-align: center;
-            background: radial-gradient(circle at 50% 50%, #1a2e1a 0%, #0d1117 100%);
+        :root {
+            --matrix-green: #00ff41;
+            --bright-green: #39ff14;
+            --dark-bg: #000000;
         }
 
-        /* --- 視覺效果強化：複製卡片 --- */
-        .copy-card {
-            background: linear-gradient(145deg, #238636, #2ea043);
-            border-radius: 12px;
-            padding: 25px;
-            width: 320px;
-            margin: 20px auto;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(63, 185, 80, 0.4);
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             user-select: none;
-        }
-        
-        /* 懸浮效果 */
-        .copy-card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 0 30px rgba(63, 185, 80, 0.6);
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* 點擊瞬間的縮放效果 */
-        .copy-card:active {
-            transform: scale(0.92);
-            filter: brightness(1.2);
-        }
-
-        /* 點擊產生的擴散光圈 (透過 JS 控制) */
-        .ripple {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple-animation 0.6s linear;
-            pointer-events: none;
-        }
-        @keyframes ripple-animation {
-            to { transform: scale(4); opacity: 0; }
-        }
-
-        .ip-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin: 10px 0; font-family: monospace; font-size: 1.2rem; color: #fff; }
-
-        /* 介紹區塊 */
-        .intro-container {
-            background: #fff;
-            padding: 60px 5%;
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            flex-wrap: wrap;
-        }
-        .item {
-            background: #fff;
-            padding: 30px;
-            width: 300px;
-            border-radius: 15px;
-            color: #1f2328;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
-            text-align: center;
-            transition: 0.3s;
-        }
-        .item:hover { transform: translateY(-5px); }
-        .item i { font-size: 2.5rem; color: #3fb950; margin-bottom: 20px; }
-
-        /* 右下角懸浮按鈕 */
-        .float-btns {
-            position: fixed;
-            bottom: 30px;
-            right: 20px;
+        body {
+            background-color: var(--dark-bg);
+            font-family: "Microsoft JhengHei", sans-serif;
+            color: white;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            z-index: 9999;
+            align-items: center;
+            overflow-x: hidden;
         }
-        .btn {
-            width: 55px; height: 55px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: #fff; text-decoration: none; font-size: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: 0.3s;
-        }
-        .yt { background: #ff0000; }
-        .dc { background: #5865f2; }
-        .btn:hover { transform: scale(1.1); }
 
-        /* 頁尾 */
-        .footer {
-            background-color: #0d1117;
-            padding: 50px 20px;
+        /* 震撼綠色霓虹流動邊框 */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            border: 6px solid transparent;
+            border-image: conic-gradient(from var(--angle), transparent, var(--matrix-green), #ffffff, var(--bright-green), transparent) 1;
+            z-index: 1000;
+            pointer-events: none;
+            filter: drop-shadow(0 0 15px var(--matrix-green));
+            animation: rotateGradient 1.5s linear infinite;
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        @keyframes rotateGradient { to { --angle: 360deg; } }
+
+        /* 背景畫布 */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* 頂部標題列 */
+        .header {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            background: #2dbd4a; /* 參照原圖綠色 */
+            padding: 15px 5%;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 255, 65, 0.3);
+        }
+
+        .header h2 {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 卡片容器佈局 */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1100px;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        /* 參照截圖的卡片設計 */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 40px 20px;
             text-align: center;
-            border-top: 1px solid #30363d;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            cursor: pointer;
+            backdrop-filter: blur(5px);
         }
-        .copyright { color: #484f58; font-size: 0.8rem; margin-top: 20px; }
 
-        /* 複製提示 (Toast) */
-        #toast {
-            visibility: hidden; background: #3fb950; color: #000;
-            padding: 12px 25px; border-radius: 30px; position: fixed;
-            bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px);
-            font-weight: bold; z-index: 10000; opacity: 0;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 0 25px var(--bright-green);
         }
-        #toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .card .icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* 震動動畫 */
+        .shake {
+            animation: shake 0.1s infinite;
+        }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px); }
+            50% { transform: translate(-2px, -1px); }
+            100% { transform: translate(1px, 1px); }
+        }
     </style>
 </head>
-<body>
+<body id="main-body">
 
-    <nav class="navbar">
-        <i class="fas fa-cube cube-icon"></i>
-        <span class="brand">星河伺服器</span>
-    </nav>
+    <canvas id="stage"></canvas>
 
-    <div class="hero">
-        <h1>探索無限可能的方塊世界</h1>
-        
-        <div class="copy-card" id="ipCard" onclick="handleCopy(event, 'ryfn.falix.gg')">
-            <strong>Java Edition (PC)</strong>
-            <div class="ip-box">ryfn.falix.gg</div>
-            <p style="font-size:0.8rem; opacity: 0.9;">點擊複製 IP 加入遊戲</p>
+    <header class="header">
+        <h2>📦 星河伺服器</h2>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <span class="icon">📍</span>
+            <h3>TPA 玩家傳送</h3>
+            <p>隨時隨地與好友相聚。</p>
+        </div>
+        <div class="card">
+            <span class="icon">👤✔️</span>
+            <h3>高效反作弊</h3>
+            <p>保證絕對公平的競技環境。</p>
+        </div>
+        <div class="card">
+            <span class="icon">品</span>
+            <h3>多版本相容</h3>
+            <p>支援 ViaVersion 系列模組。</p>
+        </div>
+        <div class="card">
+            <span class="icon">💬</span>
+            <h3>Discord 同步</h3>
+            <p>聊天室即時雙向連動。</p>
+        </div>
+        <div class="card">
+            <span class="icon">⚡</span>
+            <h3>極速硬體</h3>
+            <p>採用頂級頂級處理器，穩定無延遲。</p>
+        </div>
+        <div class="card">
+            <span class="icon">🛠️</span>
+            <h3>專屬指令</h3>
+            <p>多樣化原創功能，提升遊戲體驗。</p>
         </div>
     </div>
-
-    <div class="intro-container">
-        <div class="item"><i class="fas fa-map-marker-alt"></i><h3>TPA 玩家傳送</h3><p>隨時隨地與好友相聚。</p></div>
-        <div class="item"><i class="fas fa-user-check"></i><h3>高效反作弊</h3><p>保證絕對公平的競技環境。</p></div>
-        <div class="item"><i class="fas fa-network-wired"></i><h3>多版本相容</h3><p>支援 ViaVersion 系列模組。</p></div>
-        <div class="item"><i class="fab fa-discord"></i><h3>Discord 同步</h3><p>聊天室即時雙向連動。</p></div>
-    </div>
-
-    <div class="float-btns">
-        <a href="https://youtube.com/@ryfn_falix_gg?si=PlusQ7FQkUUfXm8i" target="_blank" class="btn yt"><i class="fab fa-youtube"></i></a>
-        <a href="https://discord.gg/3D49QtXgTK" target="_blank" class="btn dc"><i class="fab fa-discord"></i></a>
-    </div>
-
-    <footer class="footer">
-        <div style="color:white; font-weight:bold; margin-bottom:15px;">加入我們的社群</div>
-        <div style="display: flex; justify-content: center; gap: 20px;">
-            <a href="https://youtube.com/@ryfn_falix_gg?si=PlusQ7FQkUUfXm8i" target="_blank" style="color: #ff0000; font-size: 2rem;"><i class="fab fa-youtube"></i></a>
-            <a href="https://discord.gg/3D49QtXgTK" target="_blank" style="color: #5865f2; font-size: 2rem;"><i class="fab fa-discord"></i></a>
-        </div>
-        <p class="copyright">© 2025-2026 Minecraft | 星河伺服器. 版權所有.</p>
-    </footer>
-
-    <div id="toast">✅ IP 複製成功，快去加入吧！</div>
 
     <script>
-        function handleCopy(event, text) {
-            // 1. 複製文字
-            navigator.clipboard.writeText(text);
+        const canvas = document.getElementById('stage');
+        const ctx = canvas.getContext('2d');
+        const body = document.getElementById('main-body');
+        let particles = [];
+        let width, height;
 
-            // 2. 產出點擊擴散效果 (Ripple)
-            const card = event.currentTarget;
-            const circle = document.createElement("span");
-            const diameter = Math.max(card.clientWidth, card.clientHeight);
-            const radius = diameter / 2;
-
-            circle.style.width = circle.style.height = `${diameter}px`;
-            circle.style.left = `${event.clientX - card.offsetLeft - radius}px`;
-            circle.style.top = `${event.clientY - card.offsetTop - radius}px`;
-            circle.classList.add("ripple");
-
-            const ripple = card.getElementsByClassName("ripple")[0];
-            if (ripple) { ripple.remove(); }
-            card.appendChild(circle);
-
-            // 3. 顯示 Toast 提示
-            var x = document.getElementById("toast");
-            x.className = "show";
-            setTimeout(function(){ x.className = ""; }, 2500);
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
         }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y;
+                this.vx = (Math.random() - 0.5) * 15;
+                this.vy = (Math.random() - 0.5) * 15;
+                this.size = Math.random() * 4 + 1;
+                this.color = color;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.02 + 0.01;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                this.vx *= 0.96; this.vy *= 0.96;
+                this.alpha -= this.decay;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function burst(x, y) {
+            body.classList.add('shake');
+            setTimeout(() => body.classList.remove('shake'), 150);
+            for (let i = 0; i < 50; i++) {
+                particles.push(new Particle(x, y, Math.random() > 0.5 ? '#00ff41' : '#ffffff'));
+            }
+        }
+
+        window.addEventListener('mousedown', (e) => burst(e.clientX, e.clientY));
+        window.addEventListener('touchstart', (e) => burst(e.touches[0].clientX, e.touches[0].clientY));
+
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+            ctx.globalCompositeOperation = 'lighter';
+            
+            particles.forEach((p, i) => {
+                p.update();
+                p.draw();
+                if (p.alpha <= 0) particles.splice(i, 1);
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        animate();
     </script>
 </body>
 </html>
