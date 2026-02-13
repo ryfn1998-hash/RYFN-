@@ -1,220 +1,184 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PLASMA OVERLOAD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星河伺服器 - 帝國永續發展</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --neon-purple: #bc13fe;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #0d1117; color: #c9d1d9; font-family: sans-serif; line-height: 1.5; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            overflow: hidden;
-            touch-action: none;
-            user-select: none;
-        }
-
-        body {
-            background-color: #000;
-            height: 100vh;
-            width: 100vw;
-        }
-
-        /* 強化的紫色霓虹流動邊框 */
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            border: 8px solid transparent;
-            border-image: conic-gradient(from var(--angle), transparent, var(--neon-purple), #ff00ff, var(--neon-purple), transparent) 1;
-            z-index: 100;
-            pointer-events: none;
-            filter: drop-shadow(0 0 25px var(--neon-purple));
-            animation: rotateGradient 1.5s linear infinite;
-        }
-
-        @property --angle {
-            syntax: '<angle>';
-            initial-value: 0deg;
-            inherits: false;
-        }
-
-        @keyframes rotateGradient {
-            to { --angle: 360deg; }
-        }
-
-        canvas {
-            position: fixed;
+        /* 頂部亮綠色導覽列 */
+        .navbar {
+            background-color: #3fb950 !important;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            position: sticky;
             top: 0;
-            left: 0;
-            z-index: 1;
+            z-index: 1000;
         }
+        .cube-icon { font-size: 1.6rem; color: #000; margin-right: 12px; }
+        .brand { color: #000; font-size: 1.3rem; font-weight: bold; }
 
-        /* 當能量爆發時的螢幕抖動效果 */
-        .shake {
-            animation: shakeAnim 0.1s infinite;
+        /* 主視覺區 */
+        .hero {
+            padding: 60px 20px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, #1a2e1a 0%, #0d1117 100%);
         }
+        .copy-card {
+            background: linear-gradient(145deg, #238636, #2ea043);
+            border-radius: 12px;
+            padding: 25px;
+            width: 320px;
+            margin: 20px auto;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(63, 185, 80, 0.4);
+            transition: 0.3s;
+        }
+        .copy-card:hover { transform: translateY(-5px); }
+        .ip-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin: 10px 0; font-family: monospace; font-size: 1.2rem; color: #fff; }
 
-        @keyframes shakeAnim {
-            0% { transform: translate(1px, 1px); }
-            50% { transform: translate(-2px, -1px); }
-            100% { transform: translate(1px, 1px); }
+        /* 介紹區塊 */
+        .intro-container {
+            background: #fff;
+            padding: 60px 5%;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
         }
+        .item {
+            background: #fff;
+            padding: 30px;
+            width: 300px;
+            border-radius: 15px;
+            color: #1f2328;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: 0.3s;
+        }
+        .item:hover { transform: translateY(-5px); }
+        .item i { font-size: 2.5rem; color: #3fb950; margin-bottom: 20px; }
+        .item h3 { margin-bottom: 10px; font-size: 1.3rem; }
+        .item p { color: #57606a; font-size: 0.9rem; }
+
+        /* 右下角懸浮按鈕 */
+        .float-btns {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 9999;
+        }
+        .btn {
+            width: 55px; height: 55px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; text-decoration: none; font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        .yt { background: #ff0000; }
+        .dc { background: #5865f2; }
+        .btn:hover { transform: scale(1.1); }
+
+        /* 頁尾 */
+        .footer {
+            background-color: #0d1117;
+            padding: 50px 20px;
+            text-align: center;
+            border-top: 1px solid #30363d;
+        }
+        .copyright { color: #484f58; font-size: 0.8rem; margin-top: 20px; }
+
+        /* 複製提示 */
+        #toast {
+            visibility: hidden; background: #238636; color: #fff;
+            padding: 12px 25px; border-radius: 8px; position: fixed;
+            bottom: 40px; left: 50%; transform: translateX(-50%);
+            font-weight: bold; z-index: 10000;
+        }
+        #toast.show { visibility: visible; }
     </style>
 </head>
-<body id="body">
+<body>
 
-    <canvas id="stage"></canvas>
+    <nav class="navbar">
+        <i class="fas fa-cube cube-icon"></i>
+        <span class="brand">星河伺服器</span>
+    </nav>
+
+    <div class="hero">
+        <h1>探索無限可能的方塊世界</h1>
+        <div class="copy-card" onclick="copyIP('ryfn.falix.gg')">
+            <strong>Java Edition (PC)</strong>
+            <div class="ip-box">ryfn.falix.gg</div>
+            <p style="font-size:0.8rem; opacity: 0.8;">點擊複製 IP</p>
+        </div>
+    </div>
+
+    <div class="intro-container">
+        <div class="item">
+            <i class="fas fa-map-marker-alt"></i>
+            <h3>TPA 玩家傳送</h3>
+            <p>簡單的傳送指令，讓你隨時與好友相聚，不再受漫長路途的困擾。</p>
+        </div>
+        <div class="item">
+            <i class="fas fa-user-check"></i>
+            <h3>高效反作弊</h3>
+            <p>全天候自動化反作弊監控系統，杜絕不正當競爭，保證絕對的公平競技環境。</p>
+        </div>
+        <div class="item">
+            <i class="fas fa-network-wired"></i>
+            <h3>多版本相容</h3>
+            <p>支援 ViaVersion 系列模組，相容多種 Minecraft 版本，跨越門檻自由連線。</p>
+        </div>
+        <div class="item">
+            <i class="fab fa-discord"></i>
+            <h3>Discord 同步</h3>
+            <p>遊戲內聊天室與 Discord 即時同步連動，社群聯繫 24 小時不中斷。</p>
+        </div>
+        <div class="item">
+            <i class="fas fa-user-shield"></i>
+            <h3>離線登入系統</h3>
+            <p>完善的帳號驗證系統，即使是離線玩家也能享有高級別的安全保護與便利性。</p>
+        </div>
+        <div class="item">
+            <i class="fas fa-tachometer-alt"></i>
+            <h3>穩定運行</h3>
+            <p>搭載高品質專業主機，24/7 持續運作，為玩家提供流暢且無延遲的生存體驗。</p>
+        </div>
+    </div>
+
+    <div class="float-btns">
+        <a href="https://youtube.com/@ryfn_falix_gg?si=PlusQ7FQkUUfXm8i" target="_blank" class="btn yt"><i class="fab fa-youtube"></i></a>
+        <a href="https://discord.gg/3D49QtXgTK" target="_blank" class="btn dc"><i class="fab fa-discord"></i></a>
+    </div>
+
+    <footer class="footer">
+        <div style="color:white; font-weight:bold; margin-bottom:15px;">加入我們的社群</div>
+        <div style="display: flex; justify-content: center; gap: 20px;">
+            <a href="https://youtube.com/@ryfn_falix_gg?si=PlusQ7FQkUUfXm8i" target="_blank" style="color: #ff0000; font-size: 2rem;"><i class="fab fa-youtube"></i></a>
+            <a href="https://discord.gg/3D49QtXgTK" target="_blank" style="color: #5865f2; font-size: 2rem;"><i class="fab fa-discord"></i></a>
+        </div>
+        <p class="copyright">© 2025-2026 Minecraft | 星河伺服器. 版權所有.</p>
+    </footer>
+
+    <div id="toast">✅ IP 已複製成功！</div>
 
     <script>
-        const canvas = document.getElementById('stage');
-        const ctx = canvas.getContext('2d');
-        const body = document.getElementById('body');
-        
-        let width, height;
-        let particles = [];
-        let touchPoints = [];
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor(x, y, color) {
-                this.x = x;
-                this.y = y;
-                this.vx = (Math.random() - 0.5) * 10;
-                this.vy = (Math.random() - 0.5) * 10;
-                this.size = Math.random() * 3 + 1;
-                this.color = color;
-                this.alpha = 1;
-                this.decay = Math.random() * 0.015 + 0.005;
-            }
-
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.alpha;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = this.color;
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            }
-
-            update() {
-                // 向觸控點匯聚的引力
-                touchPoints.forEach(p => {
-                    const dx = p.x - this.x;
-                    const dy = p.y - this.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist < 300) {
-                        this.vx += dx * 0.005;
-                        this.vy += dy * 0.005;
-                    }
-                });
-
-                this.x += this.vx;
-                this.y += this.vy;
-                this.vx *= 0.96;
-                this.vy *= 0.96;
-                this.alpha -= this.decay;
-            }
-        }
-
-        function createDenseExplosion(x, y) {
-            // 觸發螢幕抖動
-            body.classList.add('shake');
-            setTimeout(() => body.classList.remove('shake'), 200);
-
-            for (let i = 0; i < 60; i++) {
-                const color = Math.random() > 0.3 ? '#bc13fe' : '#ffffff';
-                particles.push(new Particle(x, y, color));
-            }
-        }
-
-        function updateTouchPoints(e) {
-            touchPoints = [];
-            const touches = e.touches ? Array.from(e.touches) : [e];
-            touches.forEach(t => {
-                touchPoints.push({ x: t.clientX, y: t.clientY });
-                // 持續產生高密度流光
-                for(let i=0; i<3; i++) {
-                    particles.push(new Particle(t.clientX, t.clientY, '#bc13fe'));
-                }
+        function copyIP(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                var x = document.getElementById("toast");
+                x.className = "show";
+                setTimeout(function(){ x.className = ""; }, 2000);
             });
         }
-
-        window.addEventListener('mousedown', (e) => {
-            updateTouchPoints(e);
-            createDenseExplosion(e.clientX, e.clientY);
-        });
-
-        window.addEventListener('mousemove', (e) => {
-            if (e.buttons > 0) updateTouchPoints(e);
-        });
-
-        window.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            updateTouchPoints(e);
-            createDenseExplosion(e.touches[0].clientX, e.touches[0].clientY);
-        }, { passive: false });
-
-        window.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            updateTouchPoints(e);
-        }, { passive: false });
-
-        window.addEventListener('touchend', () => touchPoints = []);
-        window.addEventListener('mouseup', () => touchPoints = []);
-
-        function animate() {
-            // 設置為 lighter 模式會讓粒子重疊處變亮，看起來更震撼
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
-            ctx.fillRect(0, 0, width, height);
-            
-            ctx.globalCompositeOperation = 'lighter';
-
-            // 繪製粒子間的神經元連線
-            ctx.lineWidth = 0.5;
-            for (let i = 0; i < particles.length; i += 2) { // 抽樣連線以保持效能
-                for (let j = i + 1; j < particles.length; j += 5) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist < 80) {
-                        ctx.strokeStyle = `rgba(188, 19, 254, ${particles[i].alpha * 0.5})`;
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-
-            particles.forEach((p, index) => {
-                if (p.alpha <= 0) {
-                    particles.splice(index, 1);
-                } else {
-                    p.update();
-                    p.draw();
-                }
-            });
-
-            requestAnimationFrame(animate);
-        }
-
-        animate();
     </script>
 </body>
 </html>
