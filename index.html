@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: #0d1117; color: #c9d1d9; font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif; line-height: 1.5; }
+        body { background-color: #0d1117; color: #c9d1d9; font-family: sans-serif; line-height: 1.5; }
 
-        /* 導覽列 */
+        /* 頂部亮綠色導覽列 */
         .navbar {
             background-color: #3fb950 !important;
             height: 60px;
@@ -25,7 +25,7 @@
 
         /* 主視覺區 */
         .hero {
-            padding: 80px 20px 40px 20px;
+            padding: 60px 20px;
             text-align: center;
             background: radial-gradient(circle at 50% 50%, #1a2e1a 0%, #0d1117 100%);
         }
@@ -36,16 +36,55 @@
             width: 320px;
             margin: 20px auto;
             cursor: pointer;
-            box-shadow: 0 0 30px rgba(63, 185, 80, 0.3);
+            box-shadow: 0 0 20px rgba(63, 185, 80, 0.4);
             transition: 0.3s;
         }
         .copy-card:hover { transform: translateY(-5px); }
-        .ip-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin: 10px 0; font-family: 'Courier New', monospace; font-size: 1.2rem; color: #fff; }
+        .ip-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin: 10px 0; font-family: monospace; font-size: 1.2rem; color: #fff; }
 
-        /* 介紹區塊 (六格框框) */
+        /* --- 新增：伺服器狀態區塊樣式 --- */
+        .status-container {
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(63, 185, 80, 0.3);
+        }
+        .status-dot {
+            height: 12px;
+            width: 12px;
+            background-color: #888;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            position: relative;
+        }
+        .status-dot.online { background-color: #3fb950; box-shadow: 0 0 10px #3fb950; }
+        .status-dot.offline { background-color: #f85149; box-shadow: 0 0 10px #f85149; }
+        
+        /* 呼吸動畫 */
+        .online::after {
+            content: "";
+            position: absolute;
+            width: 100%; height: 100%;
+            background: inherit;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        .status-text { font-weight: bold; margin-right: 15px; }
+        .player-count { font-size: 0.9rem; color: #8b949e; }
+        /* ---------------------------- */
+
+        /* 介紹區塊 */
         .intro-container {
             background: #fff;
-            padding: 80px 5%;
+            padding: 60px 5%;
             display: flex;
             justify-content: center;
             gap: 25px;
@@ -53,118 +92,56 @@
         }
         .item {
             background: #fff;
-            padding: 35px 25px;
-            width: 320px;
+            padding: 30px;
+            width: 300px;
             border-radius: 15px;
             color: #1f2328;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
             text-align: center;
             transition: 0.3s;
-            border: 1px solid #f0f0f0;
         }
         .item:hover { transform: translateY(-5px); }
         .item i { font-size: 2.5rem; color: #3fb950; margin-bottom: 20px; }
         .item h3 { margin-bottom: 10px; font-size: 1.3rem; }
         .item p { color: #57606a; font-size: 0.9rem; }
 
-        /* 即時資訊數據中心 */
-        .live-status-section {
-            background-color: #0d1117;
-            padding: 60px 5%;
-            border-top: 1px solid #30363d;
-        }
-        .section-title { text-align: center; margin-bottom: 40px; }
-        .section-title h2 { color: #fff; font-size: 2rem; margin-bottom: 10px; }
-        .section-title p { color: #8b949e; }
-
-        .dashboard-grid {
-            max-width: 1100px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-        .stat-card {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 12px;
-            padding: 25px;
-            position: relative;
-        }
-        .stat-card .label { color: #8b949e; font-size: 0.85rem; display: block; margin-bottom: 10px; }
-        .stat-card .value { color: #fff; font-size: 1.5rem; font-weight: bold; display: block; }
-        
-        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
-        .online-dot { background: #3fb950; box-shadow: 0 0 10px #3fb950; }
-        .offline-dot { background: #f85149; box-shadow: 0 0 10px #f85149; }
-
-        .progress-mini { width: 100%; height: 6px; background: #30363d; border-radius: 3px; margin-top: 15px; }
-        .progress-fill { height: 100%; background: #3fb950; width: 0%; transition: width 1s; }
-
-        /* 機器人介紹區塊 */
-        .bot-section {
-            background: #f8f9fa;
-            padding: 80px 5%;
-            text-align: center;
-        }
-        .bot-grid {
+        /* 右下角懸浮按鈕 */
+        .float-btns {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
             display: flex;
-            justify-content: center;
-            gap: 25px;
-            flex-wrap: wrap;
-            max-width: 1200px;
-            margin: 0 auto;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 9999;
         }
-        .bot-item {
-            background: #fff;
-            padding: 40px 30px;
-            width: 280px;
-            border-radius: 20px;
-            color: #1f2328;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        .btn {
+            width: 55px; height: 55px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; text-decoration: none; font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             transition: 0.3s;
         }
-        .bot-item:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(63, 185, 80, 0.2); }
-        .bot-item i { font-size: 2.8rem; color: #5865f2; margin-bottom: 20px; }
-        .bot-item h3 { margin-bottom: 12px; font-size: 1.25rem; color: #0d1117; }
-        .bot-item p { color: #57606a; font-size: 0.9rem; line-height: 1.6; }
-
-        /* 懸浮按鈕 */
-        .float-btns { position: fixed; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 9999; }
-        .btn { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; font-size: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; }
         .yt { background: #ff0000; }
         .dc { background: #5865f2; }
+        .btn:hover { transform: scale(1.1); }
 
-        /* 頁尾 - 根據圖片恢復 */
+        /* 頁尾 */
         .footer {
             background-color: #0d1117;
-            padding: 60px 20px;
+            padding: 50px 20px;
             text-align: center;
             border-top: 1px solid #30363d;
         }
-        .footer-social-title {
-            color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-        }
-        .footer-icons {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-        .footer-icons a {
-            font-size: 2.5rem;
-            transition: 0.3s;
-        }
-        .footer-icons .fa-youtube { color: #ff0000; }
-        .footer-icons .fa-discord { color: #5865f2; }
-        .footer-icons a:hover { transform: scale(1.1); }
-        
-        .copyright { color: #484f58; font-size: 0.85rem; }
+        .copyright { color: #484f58; font-size: 0.8rem; margin-top: 20px; }
 
-        #toast { visibility: hidden; background: #238636; color: #fff; padding: 12px 25px; border-radius: 8px; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 10000; }
+        /* 複製提示 */
+        #toast {
+            visibility: hidden; background: #238636; color: #fff;
+            padding: 12px 25px; border-radius: 8px; position: fixed;
+            bottom: 40px; left: 50%; transform: translateX(-50%);
+            font-weight: bold; z-index: 10000;
+        }
         #toast.show { visibility: visible; }
     </style>
 </head>
@@ -177,71 +154,63 @@
 
     <div class="hero">
         <h1>探索無限可能的方塊世界</h1>
+        
         <div class="copy-card" onclick="copyIP('ryfn.falix.gg')">
             <strong>Java Edition (PC)</strong>
-            <div class="ip-box">ryfn.falix.gg</div>
+            <div class="ip-box" id="server-ip">ryfn.falix.gg</div>
             <p style="font-size:0.8rem; opacity: 0.8;">點擊複製 IP</p>
+        </div>
+
+        <div class="status-container">
+            <span id="status-dot" class="status-dot"></span>
+            <span id="status-text" class="status-text">偵測中...</span>
+            <span id="player-count" class="player-count"></span>
         </div>
     </div>
 
     <div class="intro-container">
-        <div class="item"><i class="fas fa-map-marker-alt"></i><h3>TPA 玩家傳送</h3><p>簡單的傳送指令，讓你隨時與好友相聚。</p></div>
-        <div class="item"><i class="fas fa-user-check"></i><h3>高效反作弊</h3><p>全天候自動化監控系統，杜絕不正當競爭。</p></div>
-        <div class="item"><i class="fas fa-network-wired"></i><h3>多版本相容</h3><p>支援 ViaVersion 系列，跨越版本自由連線。</p></div>
-        <div class="item"><i class="fab fa-discord"></i><h3>Discord 同步</h3><p>遊戲內聊天室與 Discord 即時同步連動。</p></div>
-        <div class="item"><i class="fas fa-user-shield"></i><h3>離線登入系統</h3><p>完善的帳號驗證系統，享有高級別的安全保護。</p></div>
-        <div class="item"><i class="fas fa-tachometer-alt"></i><h3>穩定運行</h3><p>搭載專業主機，24/7 提供流暢生存體驗。</p></div>
+        <div class="item">
+            <i class="fas fa-map-marker-alt"></i>
+            <h3>TPA 玩家傳送</h3>
+            <p>簡單的傳送指令，讓你隨時與好友相聚，不再受漫長路途的困擾。</p>
+        </div>
+        <div class="item">
+            <i class="fas fa-user-check"></i>
+            <h3>高效反作弊</h3>
+            <p>全天候自動化反作弊監控系統，杜絕不正當競爭，保證絕對的公平競技環境。</p>
+        </div>
+        <div class="item">
+            <i class="fas fa-network-wired"></i>
+            <h3>多版本相容</h3>
+            <p>支援 ViaVersion 系列模組，相容多種 Minecraft 版本，跨越門檻自由連線。</p>
+        </div>
+        <div class="item">
+            <i class="fab fa-discord"></i>
+            <h3>Discord 同步</h3>
+            <p>遊戲內聊天室與 Discord 即時同步連動，社群聯繫 24 小時不中斷。</p>
+        </div>
+        <div class="item">
+            <i class="fas fa-user-shield"></i>
+            <h3>離線登入系統</h3>
+            <p>完善的帳號驗證系統，即使是離線玩家也能享有高級別的安全保護與便利性。</p>
+        </div>
+        <div class="item">
+            <i class="fas fa-tachometer-alt"></i>
+            <h3>穩定運行</h3>
+            <p>搭載高品質專業主機，24/7 持續運作，為玩家提供流暢且無延遲的生存體驗。</p>
+        </div>
     </div>
 
-    <section class="live-status-section">
-        <div class="section-title">
-            <h2>伺服器數據中心</h2>
-            <p>即時監控星河伺服器的運行參數</p>
-        </div>
-        <div class="dashboard-grid">
-            <div class="stat-card">
-                <span class="label">運行狀態</span>
-                <span class="value" id="live-status"><span class="status-dot online-dot"></span>讀取中...</span>
-            </div>
-            <div class="stat-card">
-                <span class="label">在線人數</span>
-                <span class="value" id="live-players">0 / 0</span>
-                <div class="progress-mini"><div id="live-player-bar" class="progress-fill"></div></div>
-            </div>
-            <div class="stat-card">
-                <span class="label">伺服器版本</span>
-                <span class="value" id="live-version">--</span>
-            </div>
-            <div class="stat-card">
-                <span class="label">網路延遲</span>
-                <span class="value">穩定</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="bot-section">
-        <div class="section-title">
-            <h2 style="color: #0d1117;">Discord 智能機器人</h2>
-            <p style="color: #57606a;">專屬機器人提供強大的遠端管理與查詢功能</p>
-        </div>
-        <div class="bot-grid">
-            <div class="bot-item"><i class="fas fa-ghost"></i><h3>怪物追蹤</h3><p>實時查詢伺服器內的怪物數量，掌握生態系統狀態。</p></div>
-            <div class="bot-item"><i class="fas fa-user-friends"></i><h3>在線玩家</h3><p>查看目前在線的所有玩家列表和遊戲時間。</p></div>
-            <div class="bot-item"><i class="fas fa-compass"></i><h3>範圍座標查詢</h3><p>查詢指定距離內的玩家座標，方便團隊協作。</p></div>
-            <div class="bot-item"><i class="fas fa-chart-line"></i><h3>伺服器統計</h3><p>獲取伺服器的詳細統計數據和性能指標。</p></div>
-        </div>
-    </section>
-
     <div class="float-btns">
-        <a href="https://youtube.com/@ryfn_falix_gg" target="_blank" class="btn yt"><i class="fab fa-youtube"></i></a>
+        <a href="https://youtube.com/@ryfn_falix_gg?si=PlusQ7FQkUUfXm8i" target="_blank" class="btn yt"><i class="fab fa-youtube"></i></a>
         <a href="https://discord.gg/3D49QtXgTK" target="_blank" class="btn dc"><i class="fab fa-discord"></i></a>
     </div>
 
     <footer class="footer">
-        <div class="footer-social-title">加入我們的社群</div>
-        <div class="footer-icons">
-            <a href="https://youtube.com/@ryfn_falix_gg" target="_blank"><i class="fab fa-youtube"></i></a>
-            <a href="https://discord.gg/3D49QtXgTK" target="_blank"><i class="fab fa-discord"></i></a>
+        <div style="color:white; font-weight:bold; margin-bottom:15px;">加入我們的社群</div>
+        <div style="display: flex; justify-content: center; gap: 20px;">
+            <a href="https://youtube.com/@ryfn_falix_gg?si=PlusQ7FQkUUfXm8i" target="_blank" style="color: #ff0000; font-size: 2rem;"><i class="fab fa-youtube"></i></a>
+            <a href="https://discord.gg/3D49QtXgTK" target="_blank" style="color: #5865f2; font-size: 2rem;"><i class="fab fa-discord"></i></a>
         </div>
         <p class="copyright">© 2025-2026 Minecraft | 星河伺服器. 版權所有.</p>
     </footer>
@@ -249,6 +218,7 @@
     <div id="toast">✅ IP 已複製成功！</div>
 
     <script>
+        // 複製 IP 功能
         function copyIP(text) {
             navigator.clipboard.writeText(text).then(function() {
                 var x = document.getElementById("toast");
@@ -256,26 +226,39 @@
                 setTimeout(function(){ x.className = ""; }, 2000);
             });
         }
-        async function updateLiveStatus() {
+
+        // 自動偵測伺服器狀態功能
+        async function updateStatus() {
             const ip = "ryfn.falix.gg";
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('status-text');
+            const playerCount = document.getElementById('player-count');
+
             try {
-                const response = await fetch(`https://api.mcstatus.io/v2/status/java/${ip}`);
+                // 使用 mcapi.us 免費 API
+                const response = await fetch(`https://mcapi.us/server/status?ip=${ip}`);
                 const data = await response.json();
+
                 if (data.online) {
-                    document.getElementById('live-status').innerHTML = '<span class="status-dot online-dot"></span>服務正常';
-                    document.getElementById('live-players').innerText = `${data.players.online} / ${data.players.max}`;
-                    // 簡化版本號顯示
-                    let versionStr = data.version.name_clean || "1.21.1";
-                    if(versionStr.includes("1.21")) versionStr = "1.21.x";
-                    document.getElementById('live-version').innerText = versionStr;
-                    document.getElementById('live-player-bar').style.width = (data.players.online / data.players.max * 100) + "%";
+                    statusDot.className = "status-dot online";
+                    statusText.innerText = "伺服器開放中";
+                    statusText.style.color = "#3fb950";
+                    playerCount.innerText = `目前人數: ${data.players.now} / ${data.players.max}`;
                 } else {
-                    document.getElementById('live-status').innerHTML = '<span class="status-dot offline-dot"></span>維護中';
+                    statusDot.className = "status-dot offline";
+                    statusText.innerText = "伺服器維護中";
+                    statusText.style.color = "#f85149";
+                    playerCount.innerText = "離線";
                 }
-            } catch (e) {}
+            } catch (error) {
+                statusText.innerText = "狀態讀取失敗";
+                console.error("Error fetching status:", error);
+            }
         }
-        updateLiveStatus();
-        setInterval(updateLiveStatus, 30000);
+
+        // 頁面載入時執行偵測，之後每 60 秒更新一次
+        updateStatus();
+        setInterval(updateStatus, 60000);
     </script>
 </body>
 </html>
