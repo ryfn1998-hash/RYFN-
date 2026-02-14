@@ -6,194 +6,201 @@
     <title>星河伺服器 - 帝國永續發展</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        html { scroll-behavior: smooth; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: #0d1117; color: #c9d1d9; font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif; }
+        body { background-color: #0d1117; color: #c9d1d9; font-family: sans-serif; line-height: 1.5; }
 
-        /* 導覽列 */
+        /* 頂部亮綠色導覽列 */
         .navbar {
             background-color: #3fb950 !important;
-            height: 60px; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 5%; position: sticky; top: 0; z-index: 1000;
-        }
-        .brand { color: #000; font-size: 1.3rem; font-weight: bold; display: flex; align-items: center; gap: 10px; }
-
-        /* 頂部數據大卡片區 */
-        .top-dashboard {
-            background: #161b22;
-            padding: 20px 5%;
+            height: 60px;
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            border-bottom: 1px solid #30363d;
+            align-items: center;
+            padding: 0 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
-        .big-stat-card {
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 12px;
-            padding: 15px 25px;
-            min-width: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            transition: 0.3s;
-        }
-        /* 複製 IP 專用卡片樣式 */
-        .copy-card-big {
-            background: #3fb950 !important;
-            color: #000 !important;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-        .copy-card-big:active { transform: scale(0.95); }
-        .stat-label { font-size: 0.8rem; color: #8b949e; margin-bottom: 5px; }
-        .copy-card-big .stat-label { color: rgba(0,0,0,0.6); }
-        .stat-val { font-size: 1.2rem; font-weight: bold; color: #3fb950; }
-        .copy-card-big .stat-val { color: #000; }
+        .cube-icon { font-size: 1.6rem; color: #000; margin-right: 12px; }
+        .brand { color: #000; font-size: 1.3rem; font-weight: bold; }
 
-        /* 即時監控影像區 */
-        .cam-section {
-            padding: 60px 5%;
+        /* 主視覺區 */
+        .hero {
+            padding: 60px 20px;
             text-align: center;
             background: radial-gradient(circle at 50% 50%, #1a2e1a 0%, #0d1117 100%);
         }
-        .cam-container {
-            max-width: 850px;
-            margin: 30px auto;
-            border: 4px solid #30363d;
-            border-radius: 20px;
-            overflow: hidden;
+
+        /* --- 視覺效果強化：複製卡片 --- */
+        .copy-card {
+            background: linear-gradient(145deg, #238636, #2ea043);
+            border-radius: 12px;
+            padding: 25px;
+            width: 320px;
+            margin: 20px auto;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(63, 185, 80, 0.4);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
-            background: #000;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            overflow: hidden;
+            user-select: none;
         }
-        .cam-ui {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 10; padding: 20px;
-            display: flex; flex-direction: column; justify-content: space-between;
+        
+        /* 懸浮效果 */
+        .copy-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 0 30px rgba(63, 185, 80, 0.6);
         }
-        .cam-tag { background: rgba(255,0,0,0.8); color: #fff; padding: 4px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; align-self: flex-start; }
-        .cam-info { color: rgba(255,255,255,0.5); font-family: monospace; text-align: left; }
-        
-        /* 讓圖片看起來像監視器 */
-        #live-cam-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; opacity: 0.7; filter: contrast(1.1) brightness(0.9); }
 
-        /* 特色介紹網格 */
-        .features-grid { background: #fff; padding: 60px 5%; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
-        .f-item { padding: 30px; border-radius: 15px; border: 1px solid #f0f0f0; text-align: center; color: #1f2328; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .f-item i { font-size: 2.5rem; color: #3fb950; margin-bottom: 15px; }
+        /* 點擊瞬間的縮放效果 */
+        .copy-card:active {
+            transform: scale(0.92);
+            filter: brightness(1.2);
+        }
 
-        /* 頁尾與懸浮按鈕 */
-        .footer { padding: 60px 20px; text-align: center; border-top: 1px solid #30363d; }
-        .float-btns { position: fixed; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 999; }
-        .float-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; font-size: 1.3rem; }
-        
-        #toast { visibility: hidden; background: #3fb950; color: #000; padding: 12px 30px; border-radius: 50px; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); font-weight: bold; z-index: 2000; }
-        #toast.show { visibility: visible; animation: fadeInUp 0.3s; }
-        @keyframes fadeInUp { from { opacity:0; transform: translate(-50%, 20px); } to { opacity:1; transform: translate(-50%, 0); } }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-        .rec-dot { animation: blink 1s infinite; }
+        /* 點擊產生的擴散光圈 (透過 JS 控制) */
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple-animation {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        .ip-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin: 10px 0; font-family: monospace; font-size: 1.2rem; color: #fff; }
+
+        /* 介紹區塊 */
+        .intro-container {
+            background: #fff;
+            padding: 60px 5%;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+        .item {
+            background: #fff;
+            padding: 30px;
+            width: 300px;
+            border-radius: 15px;
+            color: #1f2328;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: 0.3s;
+        }
+        .item:hover { transform: translateY(-5px); }
+        .item i { font-size: 2.5rem; color: #3fb950; margin-bottom: 20px; }
+
+        /* 右下角懸浮按鈕 */
+        .float-btns {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 9999;
+        }
+        .btn {
+            width: 55px; height: 55px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; text-decoration: none; font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        .yt { background: #ff0000; }
+        .dc { background: #5865f2; }
+        .btn:hover { transform: scale(1.1); }
+
+        /* 頁尾 */
+        .footer {
+            background-color: #0d1117;
+            padding: 50px 20px;
+            text-align: center;
+            border-top: 1px solid #30363d;
+        }
+        .copyright { color: #484f58; font-size: 0.8rem; margin-top: 20px; }
+
+        /* 複製提示 (Toast) */
+        #toast {
+            visibility: hidden; background: #3fb950; color: #000;
+            padding: 12px 25px; border-radius: 30px; position: fixed;
+            bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px);
+            font-weight: bold; z-index: 10000; opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        #toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="brand"><i class="fas fa-cube"></i> 星河伺服器</div>
-        <div style="font-size: 0.9rem; font-weight: bold; color: #000;">帝國永續發展</div>
+        <i class="fas fa-cube cube-icon"></i>
+        <span class="brand">星河伺服器</span>
     </nav>
 
-    <div class="top-dashboard">
-        <div class="big-stat-card copy-card-big" onclick="copyIP('ryfn.falix.gg')">
-            <span class="stat-label"><i class="fas fa-copy"></i> 點擊複製 IP</span>
-            <span class="stat-val">ryfn.falix.gg</span>
-        </div>
-        <div class="big-stat-card">
-            <span class="stat-label">運行狀態</span>
-            <span id="st-status" class="stat-val">偵測中...</span>
-        </div>
-        <div class="big-stat-card">
-            <span class="stat-label">目前人數</span>
-            <span id="st-players" class="stat-val">0 / 0</span>
-        </div>
-        <div class="big-stat-card">
-            <span class="stat-label">伺服器延遲</span>
-            <span id="st-ping" class="stat-val">-- ms</span>
+    <div class="hero">
+        <h1>探索無限可能的方塊世界</h1>
+        
+        <div class="copy-card" id="ipCard" onclick="handleCopy(event, 'ryfn.falix.gg')">
+            <strong>Java Edition (PC)</strong>
+            <div class="ip-box">ryfn.falix.gg</div>
+            <p style="font-size:0.8rem; opacity: 0.9;">點擊複製 IP 加入遊戲</p>
         </div>
     </div>
 
-    <section class="cam-section">
-        <div style="margin-bottom: 20px;">
-            <h2 style="font-size: 2rem; color: #fff;">出生點即時監控</h2>
-            <p style="color: #8b949e;">LIVE CAMERA - SPAWN POINT</p>
-        </div>
-        
-        <div class="cam-container">
-            <div class="cam-ui">
-                <div class="cam-tag"><span class="rec-dot">●</span> REC LIVE</div>
-                <div class="cam-info">
-                    <p>CAM_01: SPAWN_AREA</p>
-                    <p id="cam-time"></p>
-                </div>
-            </div>
-            <img id="live-cam-img" src="https://images.unsplash.com/photo-1627398242454-45a1465c2479?auto=format&fit=crop&q=80&w=1000" alt="即時影像">
-        </div>
-    </section>
-
-    <div class="features-grid">
-        <div class="f-item"><i class="fas fa-bolt"></i><h3>穩定運行</h3><p>專業主機架設，保證 24/7 不斷線。</p></div>
-        <div class="f-item"><i class="fas fa-shield-alt"></i><h3>安全防護</h3><p>高效反作弊與備份系統，保護玩家資產。</p></div>
-        <div class="f-item"><i class="fab fa-discord"></i><h3>社群聯動</h3><p>Discord 機器人即時同步遊戲訊息。</p></div>
+    <div class="intro-container">
+        <div class="item"><i class="fas fa-map-marker-alt"></i><h3>TPA 玩家傳送</h3><p>隨時隨地與好友相聚。</p></div>
+        <div class="item"><i class="fas fa-user-check"></i><h3>高效反作弊</h3><p>保證絕對公平的競技環境。</p></div>
+        <div class="item"><i class="fas fa-network-wired"></i><h3>多版本相容</h3><p>支援 ViaVersion 系列模組。</p></div>
+        <div class="item"><i class="fab fa-discord"></i><h3>Discord 同步</h3><p>聊天室即時雙向連動。</p></div>
     </div>
 
     <div class="float-btns">
-        <a href="https://youtube.com/@ryfn_falix_gg" target="_blank" class="float-btn" style="background:#ff0000;"><i class="fab fa-youtube"></i></a>
-        <a href="https://discord.gg/3D49QtXgTK" target="_blank" class="float-btn" style="background:#5865f2;"><i class="fab fa-discord"></i></a>
+        <a href="https://youtube.com/@ryfn_falix_gg?si=PlusQ7FQkUUfXm8i" target="_blank" class="btn yt"><i class="fab fa-youtube"></i></a>
+        <a href="https://discord.gg/3D49QtXgTK" target="_blank" class="btn dc"><i class="fab fa-discord"></i></a>
     </div>
 
     <footer class="footer">
-        <p>© 2025-2026 星河伺服器 | 版權所有</p>
+        <div style="color:white; font-weight:bold; margin-bottom:15px;">加入我們的社群</div>
+        <div style="display: flex; justify-content: center; gap: 20px;">
+            <a href="https://youtube.com/@ryfn_falix_gg?si=PlusQ7FQkUUfXm8i" target="_blank" style="color: #ff0000; font-size: 2rem;"><i class="fab fa-youtube"></i></a>
+            <a href="https://discord.gg/3D49QtXgTK" target="_blank" style="color: #5865f2; font-size: 2rem;"><i class="fab fa-discord"></i></a>
+        </div>
+        <p class="copyright">© 2025-2026 Minecraft | 星河伺服器. 版權所有.</p>
     </footer>
 
-    <div id="toast">✅ IP 已複製到剪貼簿</div>
+    <div id="toast">✅ IP 複製成功，快去加入吧！</div>
 
     <script>
-        function copyIP(text) {
+        function handleCopy(event, text) {
+            // 1. 複製文字
             navigator.clipboard.writeText(text);
+
+            // 2. 產出點擊擴散效果 (Ripple)
+            const card = event.currentTarget;
+            const circle = document.createElement("span");
+            const diameter = Math.max(card.clientWidth, card.clientHeight);
+            const radius = diameter / 2;
+
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - card.offsetLeft - radius}px`;
+            circle.style.top = `${event.clientY - card.offsetTop - radius}px`;
+            circle.classList.add("ripple");
+
+            const ripple = card.getElementsByClassName("ripple")[0];
+            if (ripple) { ripple.remove(); }
+            card.appendChild(circle);
+
+            // 3. 顯示 Toast 提示
             var x = document.getElementById("toast");
             x.className = "show";
-            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 2500);
+            setTimeout(function(){ x.className = ""; }, 2500);
         }
-
-        async function updateStats() {
-            const ip = "ryfn.falix.gg";
-            const start = Date.now();
-            try {
-                const res = await fetch(`https://api.mcstatus.io/v2/status/java/${ip}`);
-                const data = await res.json();
-                const ping = Date.now() - start;
-
-                if (data.online) {
-                    document.getElementById('st-status').innerText = "開啟中";
-                    document.getElementById('st-players').innerText = `${data.players.online} / ${data.players.max}`;
-                    document.getElementById('st-ping').innerText = `${ping} ms`;
-                } else {
-                    document.getElementById('st-status').innerText = "維護中";
-                    document.getElementById('st-status').style.color = "#f85149";
-                }
-            } catch (e) { console.log("API Error"); }
-        }
-
-        // 更新監視器時間
-        function updateCamTime() {
-            const now = new Date();
-            document.getElementById('cam-time').innerText = now.toLocaleString();
-        }
-
-        updateStats();
-        setInterval(updateStats, 15000);
-        setInterval(updateCamTime, 1000);
     </script>
 </body>
 </html>
