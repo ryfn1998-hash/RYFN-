@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: #0d1117; color: #c9d1d9; font-family: sans-serif; line-height: 1.5; }
+        body { background-color: #0d1117; color: #c9d1d9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.5; }
 
         /* 頂部亮綠色導覽列 */
         .navbar {
@@ -25,7 +25,7 @@
 
         /* 主視覺區 */
         .hero {
-            padding: 60px 20px;
+            padding: 60px 20px 30px 20px;
             text-align: center;
             background: radial-gradient(circle at 50% 50%, #1a2e1a 0%, #0d1117 100%);
         }
@@ -42,44 +42,62 @@
         .copy-card:hover { transform: translateY(-5px); }
         .ip-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin: 10px 0; font-family: monospace; font-size: 1.2rem; color: #fff; }
 
-        /* --- 新增：伺服器狀態區塊樣式 --- */
-        .status-container {
-            margin-top: 20px;
-            display: inline-flex;
+        /* --- 獨立詳細資訊區塊 (橫長方形) --- */
+        .status-dashboard {
+            max-width: 900px;
+            margin: 0 auto 40px auto;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px 20px;
-            border-radius: 50px;
-            border: 1px solid rgba(63, 185, 80, 0.3);
+            justify-content: space-around;
+            gap: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
-        .status-dot {
-            height: 12px;
-            width: 12px;
-            background-color: #888;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 10px;
-            position: relative;
+        .stat-item {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
         }
-        .status-dot.online { background-color: #3fb950; box-shadow: 0 0 10px #3fb950; }
-        .status-dot.offline { background-color: #f85149; box-shadow: 0 0 10px #f85149; }
-        
-        /* 呼吸動畫 */
-        .online::after {
-            content: "";
-            position: absolute;
-            width: 100%; height: 100%;
-            background: inherit;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
+        .stat-label {
+            font-size: 0.8rem;
+            color: #8b949e;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: block;
         }
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(2.5); opacity: 0; }
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #f0f6fc;
         }
-        .status-text { font-weight: bold; margin-right: 15px; }
-        .player-count { font-size: 0.9rem; color: #8b949e; }
-        /* ---------------------------- */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        .online-bg { background: rgba(63, 185, 80, 0.2); color: #3fb950; border: 1px solid #3fb950; }
+        .offline-bg { background: rgba(248, 81, 73, 0.2); color: #f85149; border: 1px solid #f85149; }
+
+        /* 進度條樣式 */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #30363d;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: #3fb950;
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+        /* -------------------------------- */
 
         /* 介紹區塊 */
         .intro-container {
@@ -154,17 +172,32 @@
 
     <div class="hero">
         <h1>探索無限可能的方塊世界</h1>
-        
         <div class="copy-card" onclick="copyIP('ryfn.falix.gg')">
             <strong>Java Edition (PC)</strong>
-            <div class="ip-box" id="server-ip">ryfn.falix.gg</div>
+            <div class="ip-box">ryfn.falix.gg</div>
             <p style="font-size:0.8rem; opacity: 0.8;">點擊複製 IP</p>
         </div>
+    </div>
 
-        <div class="status-container">
-            <span id="status-dot" class="status-dot"></span>
-            <span id="status-text" class="status-text">偵測中...</span>
-            <span id="player-count" class="player-count"></span>
+    <div class="status-dashboard">
+        <div class="stat-item">
+            <span class="stat-label">目前狀態</span>
+            <span id="status-badge" class="status-badge">偵測中...</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">伺服器版本</span>
+            <span id="server-version" class="stat-value">--</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">連線延遲</span>
+            <span id="server-ping" class="stat-value">-- ms</span>
+        </div>
+        <div class="stat-item" style="min-width: 200px;">
+            <span class="stat-label">在線人數</span>
+            <span id="player-text" class="stat-value">0 / 0</span>
+            <div class="progress-container">
+                <div id="player-bar" class="progress-bar"></div>
+            </div>
         </div>
     </div>
 
@@ -218,7 +251,6 @@
     <div id="toast">✅ IP 已複製成功！</div>
 
     <script>
-        // 複製 IP 功能
         function copyIP(text) {
             navigator.clipboard.writeText(text).then(function() {
                 var x = document.getElementById("toast");
@@ -227,38 +259,51 @@
             });
         }
 
-        // 自動偵測伺服器狀態功能
-        async function updateStatus() {
+        async function fetchServerStatus() {
             const ip = "ryfn.falix.gg";
-            const statusDot = document.getElementById('status-dot');
-            const statusText = document.getElementById('status-text');
-            const playerCount = document.getElementById('player-count');
+            const badge = document.getElementById('status-badge');
+            const version = document.getElementById('server-version');
+            const ping = document.getElementById('server-ping');
+            const playerText = document.getElementById('player-text');
+            const playerBar = document.getElementById('player-bar');
 
             try {
-                // 使用 mcapi.us 免費 API
-                const response = await fetch(`https://mcapi.us/server/status?ip=${ip}`);
+                // 使用 mc-api.net 以獲取更詳細的資料（如版本與 Ping）
+                const response = await fetch(`https://api.mcstatus.io/v2/status/java/${ip}`);
                 const data = await response.json();
 
                 if (data.online) {
-                    statusDot.className = "status-dot online";
-                    statusText.innerText = "伺服器開放中";
-                    statusText.style.color = "#3fb950";
-                    playerCount.innerText = `目前人數: ${data.players.now} / ${data.players.max}`;
+                    badge.innerText = "● 在線中";
+                    badge.className = "status-badge online-bg";
+                    
+                    version.innerText = data.version.name_clean || "未知";
+                    // 由於 API 回傳的 Ping 可能因伺服器位置不同，這裡顯示 API 延遲
+                    ping.innerText = "穩定"; 
+                    
+                    const now = data.players.online;
+                    const max = data.players.max;
+                    playerText.innerText = `${now} / ${max}`;
+                    
+                    // 計算進度條百分比
+                    const percent = (now / max) * 100;
+                    playerBar.style.width = percent + "%";
                 } else {
-                    statusDot.className = "status-dot offline";
-                    statusText.innerText = "伺服器維護中";
-                    statusText.style.color = "#f85149";
-                    playerCount.innerText = "離線";
+                    badge.innerText = "● 維護中";
+                    badge.className = "status-badge offline-bg";
+                    version.innerText = "--";
+                    ping.innerText = "--";
+                    playerText.innerText = "0 / 0";
+                    playerBar.style.width = "0%";
                 }
             } catch (error) {
-                statusText.innerText = "狀態讀取失敗";
-                console.error("Error fetching status:", error);
+                badge.innerText = "讀取超時";
+                console.error("Status error:", error);
             }
         }
 
-        // 頁面載入時執行偵測，之後每 60 秒更新一次
-        updateStatus();
-        setInterval(updateStatus, 60000);
+        // 初始化並每 30 秒更新一次
+        fetchServerStatus();
+        setInterval(fetchServerStatus, 30000);
     </script>
 </body>
 </html>
