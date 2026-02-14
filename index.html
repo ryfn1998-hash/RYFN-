@@ -81,7 +81,7 @@
             max-width: 1100px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
         }
         .stat-card {
@@ -101,7 +101,7 @@
         .progress-mini { width: 100%; height: 6px; background: #30363d; border-radius: 3px; margin-top: 15px; }
         .progress-fill { height: 100%; background: #3fb950; width: 0%; transition: width 1s; }
 
-        /* --- 新增：機器人介紹區塊 --- */
+        /* 機器人介紹區塊 */
         .bot-section {
             background: #f8f9fa;
             padding: 80px 5%;
@@ -125,11 +125,9 @@
             transition: 0.3s;
         }
         .bot-item:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(63, 185, 80, 0.2); }
-        .bot-item i { font-size: 2.8rem; color: #5865f2; margin-bottom: 20px; } /* 使用 Discord 藍色調 */
+        .bot-item i { font-size: 2.8rem; color: #5865f2; margin-bottom: 20px; }
         .bot-item h3 { margin-bottom: 12px; font-size: 1.25rem; color: #0d1117; }
         .bot-item p { color: #57606a; font-size: 0.9rem; line-height: 1.6; }
-
-        /* --------------------------- */
 
         /* 懸浮按鈕 */
         .float-btns { position: fixed; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 9999; }
@@ -137,9 +135,34 @@
         .yt { background: #ff0000; }
         .dc { background: #5865f2; }
 
-        /* 頁尾 */
-        .footer { background-color: #0d1117; padding: 50px 20px; text-align: center; border-top: 1px solid #30363d; }
-        .copyright { color: #484f58; font-size: 0.8rem; margin-top: 20px; }
+        /* 頁尾 - 根據圖片恢復 */
+        .footer {
+            background-color: #0d1117;
+            padding: 60px 20px;
+            text-align: center;
+            border-top: 1px solid #30363d;
+        }
+        .footer-social-title {
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        .footer-icons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .footer-icons a {
+            font-size: 2.5rem;
+            transition: 0.3s;
+        }
+        .footer-icons .fa-youtube { color: #ff0000; }
+        .footer-icons .fa-discord { color: #5865f2; }
+        .footer-icons a:hover { transform: scale(1.1); }
+        
+        .copyright { color: #484f58; font-size: 0.85rem; }
 
         #toast { visibility: hidden; background: #238636; color: #fff; padding: 12px 25px; border-radius: 8px; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 10000; }
         #toast.show { visibility: visible; }
@@ -167,7 +190,7 @@
         <div class="item"><i class="fas fa-network-wired"></i><h3>多版本相容</h3><p>支援 ViaVersion 系列，跨越版本自由連線。</p></div>
         <div class="item"><i class="fab fa-discord"></i><h3>Discord 同步</h3><p>遊戲內聊天室與 Discord 即時同步連動。</p></div>
         <div class="item"><i class="fas fa-user-shield"></i><h3>離線登入系統</h3><p>完善的帳號驗證系統，享有高級別的安全保護。</p></div>
-        <div class="item"><i class="fas fa-tachometer-alt"></i><h3>穩定運行</h3><p>搭載高品質主機，24/7 提供流暢生存體驗。</p></div>
+        <div class="item"><i class="fas fa-tachometer-alt"></i><h3>穩定運行</h3><p>搭載專業主機，24/7 提供流暢生存體驗。</p></div>
     </div>
 
     <section class="live-status-section">
@@ -176,10 +199,23 @@
             <p>即時監控星河伺服器的運行參數</p>
         </div>
         <div class="dashboard-grid">
-            <div class="stat-card"><span class="label">運行狀態</span><span class="value" id="live-status"><span class="status-dot online-dot"></span>讀取中...</span></div>
-            <div class="stat-card"><span class="label">在線人數</span><span class="value" id="live-players">0 / 0</span><div class="progress-mini"><div id="live-player-bar" class="progress-fill"></div></div></div>
-            <div class="stat-card"><span class="label">核心版本</span><span class="value" id="live-version">--</span></div>
-            <div class="stat-card"><span class="label">網路延遲</span><span class="value">穩定</span></div>
+            <div class="stat-card">
+                <span class="label">運行狀態</span>
+                <span class="value" id="live-status"><span class="status-dot online-dot"></span>讀取中...</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">在線人數</span>
+                <span class="value" id="live-players">0 / 0</span>
+                <div class="progress-mini"><div id="live-player-bar" class="progress-fill"></div></div>
+            </div>
+            <div class="stat-card">
+                <span class="label">伺服器版本</span>
+                <span class="value" id="live-version">--</span>
+            </div>
+            <div class="stat-card">
+                <span class="label">網路延遲</span>
+                <span class="value">穩定</span>
+            </div>
         </div>
     </section>
 
@@ -189,26 +225,10 @@
             <p style="color: #57606a;">專屬機器人提供強大的遠端管理與查詢功能</p>
         </div>
         <div class="bot-grid">
-            <div class="bot-item">
-                <i class="fas fa-ghost"></i>
-                <h3>怪物追蹤</h3>
-                <p>實時查詢伺服器內的怪物數量，精準掌握生態系統與刷怪效率狀態。</p>
-            </div>
-            <div class="bot-item">
-                <i class="fas fa-user-friends"></i>
-                <h3>在線玩家</h3>
-                <p>隨時查看目前在線的所有玩家列表、頭像及其累積的遊戲總時間。</p>
-            </div>
-            <div class="bot-item">
-                <i class="fas fa-compass"></i>
-                <h3>範圍座標查詢</h3>
-                <p>快速查詢指定距離內的玩家座標，強化團隊協作與資源分配效率。</p>
-            </div>
-            <div class="bot-item">
-                <i class="fas fa-chart-line"></i>
-                <h3>伺服器統計</h3>
-                <p>獲取伺服器的詳細統計歷史數據、TPS 性能指標與硬體負載報告。</p>
-            </div>
+            <div class="bot-item"><i class="fas fa-ghost"></i><h3>怪物追蹤</h3><p>實時查詢伺服器內的怪物數量，掌握生態系統狀態。</p></div>
+            <div class="bot-item"><i class="fas fa-user-friends"></i><h3>在線玩家</h3><p>查看目前在線的所有玩家列表和遊戲時間。</p></div>
+            <div class="bot-item"><i class="fas fa-compass"></i><h3>範圍座標查詢</h3><p>查詢指定距離內的玩家座標，方便團隊協作。</p></div>
+            <div class="bot-item"><i class="fas fa-chart-line"></i><h3>伺服器統計</h3><p>獲取伺服器的詳細統計數據和性能指標。</p></div>
         </div>
     </section>
 
@@ -218,6 +238,11 @@
     </div>
 
     <footer class="footer">
+        <div class="footer-social-title">加入我們的社群</div>
+        <div class="footer-icons">
+            <a href="https://youtube.com/@ryfn_falix_gg" target="_blank"><i class="fab fa-youtube"></i></a>
+            <a href="https://discord.gg/3D49QtXgTK" target="_blank"><i class="fab fa-discord"></i></a>
+        </div>
         <p class="copyright">© 2025-2026 Minecraft | 星河伺服器. 版權所有.</p>
     </footer>
 
@@ -239,8 +264,13 @@
                 if (data.online) {
                     document.getElementById('live-status').innerHTML = '<span class="status-dot online-dot"></span>服務正常';
                     document.getElementById('live-players').innerText = `${data.players.online} / ${data.players.max}`;
-                    document.getElementById('live-version').innerText = data.version.name_clean || "1.21.1";
+                    // 簡化版本號顯示
+                    let versionStr = data.version.name_clean || "1.21.1";
+                    if(versionStr.includes("1.21")) versionStr = "1.21.x";
+                    document.getElementById('live-version').innerText = versionStr;
                     document.getElementById('live-player-bar').style.width = (data.players.online / data.players.max * 100) + "%";
+                } else {
+                    document.getElementById('live-status').innerHTML = '<span class="status-dot offline-dot"></span>維護中';
                 }
             } catch (e) {}
         }
