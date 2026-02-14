@@ -6,7 +6,6 @@
     <title>星河伺服器 - 官方網站</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 基礎設定 */
         html { scroll-behavior: smooth; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: #0d1117; color: #c9d1d9; font-family: "Microsoft JhengHei", sans-serif; }
@@ -25,6 +24,7 @@
         }
         .nav-left { display: flex; align-items: center; color: #000; font-weight: bold; font-size: 1.2rem; }
         .nav-left i { margin-right: 10px; font-size: 1.5rem; }
+        
         .nav-right { display: flex; gap: 20px; }
         .nav-link { color: #000; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
 
@@ -48,11 +48,11 @@
         .copy-card {
             background: linear-gradient(145deg, #238636, #2ea043);
             border-radius: 12px; padding: 25px; width: 320px; margin: 0 auto;
-            cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transition: 0.3s;
+            cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .ip-box { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 6px; font-family: monospace; font-size: 1.4rem; color: #fff; margin: 15px 0; }
 
-        /* 伺服器數據中心 */
+        /* 數據中心 */
         .section-dark { background: #0d1117; padding: 60px 5%; border-top: 1px solid #30363d; }
         .section-title { text-align: center; margin-bottom: 40px; }
         .section-title h2 { font-size: 1.8rem; color: #fff; }
@@ -66,38 +66,47 @@
             padding: 25px; transition: 0.3s;
         }
         .stat-label { color: #8b949e; font-size: 0.85rem; display: block; margin-bottom: 8px; }
-        .stat-value { color: #fff; font-size: 1.6rem; font-weight: bold; }
+        .stat-value { color: #fff; font-size: 1.5rem; font-weight: bold; }
         .stat-card i { color: #3fb950; font-size: 1.5rem; margin-bottom: 10px; display: block; }
 
-        /* 特色介紹 (手機 2x3) */
-        .feature-section { background: #fff; padding: 80px 5%; color: #1f2328; }
+        /* 特色介紹 */
+        .feature-section { background: #fff; padding: 60px 5%; color: #1f2328; }
         .feature-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
             max-width: 1200px; margin: 0 auto;
         }
         .feature-item {
-            padding: 40px 20px; border-radius: 15px; text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
+            padding: 30px 15px; border-radius: 12px; text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
         }
-        .feature-item i { font-size: 2.5rem; color: #3fb950; margin-bottom: 20px; }
+        .feature-item i { font-size: 2.2rem; color: #3fb950; margin-bottom: 15px; }
 
         /* 頁尾 */
         .footer { background: #0d1117; padding: 60px 20px; text-align: center; border-top: 1px solid #30363d; }
-        .footer-icons { display: flex; justify-content: center; gap: 50px; margin: 30px 0; }
-        .footer-icons a { font-size: 3.5rem; transition: 0.3s; }
+        .footer-icons { display: flex; justify-content: center; gap: 40px; margin: 25px 0; }
+        .footer-icons a { font-size: 3rem; text-decoration: none; }
         .fa-youtube { color: #ff0000; }
         .fa-discord { color: #5865f2; }
 
-        /* 懸浮按鈕 */
+        /* 懸浮按鈕修復 */
         .float-btns { position: fixed; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 15px; z-index: 9999; }
-        .float-btn { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.6rem; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .float-btn { 
+            width: 55px; height: 55px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            color: #fff !important; font-size: 1.8rem !important; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            text-decoration: none;
+            overflow: hidden;
+        }
+        .bg-yt { background-color: #ff0000; }
+        .bg-dc { background-color: #5865f2; }
 
-        /* 手機版排版優化 */
+        /* RWD 調整 */
         @media (max-width: 768px) {
             .nav-right { display: none; }
             .menu-toggle { display: block; }
-            .feature-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-            .stats-grid { grid-template-columns: 1fr; }
+            .feature-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero h1 { font-size: 1.6rem; }
         }
 
         #toast { visibility: hidden; background: #238636; color: #fff; padding: 12px 25px; border-radius: 8px; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 10000; }
@@ -110,6 +119,7 @@
         <div class="nav-left"><i class="fas fa-cube"></i><span>星河伺服器</span></div>
         <div class="nav-right">
             <a href="#dashboard" class="nav-link">數據中心</a>
+            <a href="#achievements" class="nav-link">成就統計</a>
             <a href="#features" class="nav-link">特色介紹</a>
         </div>
         <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
@@ -117,6 +127,7 @@
 
     <div class="nav-mobile" id="nav-mobile">
         <a href="#dashboard" onclick="toggleMenu()">數據中心</a>
+        <a href="#achievements" onclick="toggleMenu()">成就統計</a>
         <a href="#features" onclick="toggleMenu()">特色介紹</a>
     </div>
 
@@ -125,7 +136,7 @@
         <div class="copy-card" onclick="copyIP('ryfn.falix.gg')">
             <p style="font-weight:bold;">Java Edition (PC)</p>
             <div class="ip-box">ryfn.falix.gg</div>
-            <p style="font-size:0.8rem; opacity:0.8;">點擊複製 IP</p>
+            <p style="font-size:0.8rem; opacity:0.8;">點擊複製 IP 加入伺服器</p>
         </div>
     </div>
 
@@ -141,25 +152,41 @@
                 <span id="live-players" class="stat-value">0 / 50</span>
             </div>
             <div class="stat-card">
-                <span class="stat-label">核心版本</span>
+                <span class="stat-label">伺服器版本</span>
                 <span id="live-version" class="stat-value">1.21.1</span>
             </div>
+        </div>
+    </section>
+
+    <section id="achievements" class="section-dark">
+        <div class="section-title"><h2>全服成就統計</h2></div>
+        <div class="stats-grid">
             <div class="stat-card">
                 <i class="fas fa-sign-in-alt"></i>
                 <span class="stat-label">累計登入總次數</span>
                 <span class="stat-value">12,840+</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-shoe-prints"></i>
+                <span class="stat-label">玩家步行總距離</span>
+                <span class="stat-value">458,209 km</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-skull-crossbones"></i>
+                <span class="stat-label">玩家總擊殺生物數</span>
+                <span class="stat-value">89,152+</span>
             </div>
         </div>
     </section>
 
     <section id="features" class="feature-section">
         <div class="feature-grid">
-            <div class="feature-item"><i class="fas fa-map-marker-alt"></i><h3>TPA 玩家傳送</h3><p>隨時與好友相聚。</p></div>
-            <div class="feature-item"><i class="fas fa-user-check"></i><h3>高效反作弊</h3><p>絕對公平環境。</p></div>
-            <div class="feature-item"><i class="fas fa-network-wired"></i><h3>多版本相容</h3><p>支援多版本連線。</p></div>
-            <div class="feature-item"><i class="fab fa-discord"></i><h3>Discord 同步</h3><p>溝通不中斷。</p></div>
-            <div class="feature-item"><i class="fas fa-user-shield"></i><h3>離線登入</h3><p>完善的安全保護。</p></div>
-            <div class="feature-item"><i class="fas fa-tachometer-alt"></i><h3>穩定運行</h3><p>流暢無延遲。</p></div>
+            <div class="feature-item"><i class="fas fa-map-marker-alt"></i><h3>TPA 傳送</h3></div>
+            <div class="feature-item"><i class="fas fa-user-check"></i><h3>反作弊</h3></div>
+            <div class="feature-item"><i class="fas fa-network-wired"></i><h3>多版本</h3></div>
+            <div class="feature-item"><i class="fab fa-discord"></i><h3>DC同步</h3></div>
+            <div class="feature-item"><i class="fas fa-user-shield"></i><h3>離線登入</h3></div>
+            <div class="feature-item"><i class="fas fa-tachometer-alt"></i><h3>穩定運行</h3></div>
         </div>
     </section>
 
@@ -169,15 +196,19 @@
             <a href="https://youtube.com/@ryfn_falix_gg" target="_blank"><i class="fab fa-youtube"></i></a>
             <a href="https://discord.gg/3D49QtXgTK" target="_blank"><i class="fab fa-discord"></i></a>
         </div>
-        <p style="color:#484f58; font-size:0.85rem;">© 2025-2026 Minecraft | 星河伺服器. 版權所有.</p>
+        <p style="color:#484f58; font-size:0.8rem;">© 2025-2026 Minecraft | 星河伺服器</p>
     </footer>
 
     <div class="float-btns">
-        <a href="https://youtube.com/@ryfn_falix_gg" target="_blank" class="float-btn" style="background:#ff0000;"><i class="fab fa-youtube"></i></a>
-        <a href="https://discord.gg/3D49QtXgTK" target="_blank" class="float-btn" style="background:#5865f2;"><i class="fab fa-discord"></i></a>
+        <a href="https://youtube.com/@ryfn_falix_gg" target="_blank" class="float-btn bg-yt">
+            <i class="fab fa-youtube"></i>
+        </a>
+        <a href="https://discord.gg/3D49QtXgTK" target="_blank" class="float-btn bg-dc">
+            <i class="fab fa-discord"></i>
+        </a>
     </div>
 
-    <div id="toast">✅ IP 已複製到剪貼簿！</div>
+    <div id="toast">✅ IP 已複製！</div>
 
     <script>
         function toggleMenu() {
@@ -192,7 +223,6 @@
             });
         }
 
-        // 抓取真實伺服器在線資料
         async function updateStats() {
             const ip = "ryfn.falix.gg";
             try {
@@ -204,9 +234,8 @@
                     document.getElementById('live-players').innerText = `${data.players.online} / ${data.players.max}`;
                     document.getElementById('live-version').innerText = data.version.name_clean;
                 }
-            } catch (e) { console.log("連線失敗"); }
+            } catch (e) { console.log("API Error"); }
         }
-
         updateStats();
         setInterval(updateStats, 30000);
     </script>
