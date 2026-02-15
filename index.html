@@ -93,19 +93,19 @@
         .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 25px; text-align: center; }
         .stat-value { font-size: 1.5rem; font-weight: bold; color: #3fb950; display: block; margin-top: 10px; }
 
-        /* 玩家頭像區塊 */
+        /* 玩家頭像區塊修復 */
         #player-list {
             display: flex; flex-wrap: wrap; justify-content: center;
             gap: 20px; max-width: 1000px; margin: 30px auto 30px auto;
         }
         .player-card {
             text-align: center; background: #161b22; padding: 15px;
-            border-radius: 10px; border: 1px solid #30363d; width: 120px;
+            border-radius: 10px; border: 1px solid #30363d; width: 130px;
             transition: 0.3s;
         }
-        .player-card:hover { transform: scale(1.05); border-color: #3fb950; }
+        .player-card img { width: 80px; height: 80px; image-rendering: pixelated; }
 
-        /* --- 新增：Discord 訊息外框樣式 --- */
+        /* Discord 同步區塊修復 */
         .discord-sync-box {
             max-width: 1000px;
             margin: 0 auto 40px auto;
@@ -155,10 +155,7 @@
 <body>
 
     <nav class="navbar">
-        <div class="nav-left">
-            <i class="fas fa-cube cube-icon"></i>
-            <span class="brand">星河伺服器</span>
-        </div>
+        <div class="nav-left"><i class="fas fa-cube cube-icon"></i><span class="brand">星河伺服器</span></div>
         <div class="nav-right">
             <a href="#features" class="nav-link">特色介紹</a>
             <a href="#dashboard" class="nav-link">數據中心</a>
@@ -192,7 +189,7 @@
         <div class="dashboard-grid">
             <div class="stat-card"><span><i class="fas fa-signal"></i> 運行狀態</span><span id="live-status" class="stat-value">讀取中...</span></div>
             <div class="stat-card"><span><i class="fas fa-users"></i> 目前人數</span><span id="live-players" class="stat-value">0 / 0</span></div>
-            <div class="stat-card"><span><i class="fas fa-code-branch"></i> 核心版本</span><span id="live-version" class="stat-value">1.21.1</span></div>
+            <div class="stat-card"><span><i class="fas fa-code-branch"></i> 核心版本</span><span id="live-version" class="stat-value">Paper 1.21.8</span></div>
             <div class="stat-card"><span><i class="fas fa-bolt"></i> 即時延遲</span><span id="live-ping" class="stat-value">-- ms</span></div>
         </div>
 
@@ -200,12 +197,7 @@
 
         <div class="discord-sync-box">
             <div class="discord-sync-header"><i class="fab fa-discord"></i> 近期公告與對話同步</div>
-            <script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script>
-            <discord-messages
-                server="1426193407130341408"
-                channel="1469880403799314432"
-                style="width: 100%; height: 380px;">
-            </discord-messages>
+            <iframe src="https://e.widgetbot.io/channels/1426193407130341408/1469880403799314432" height="380" width="100%" frameborder="0"></iframe>
         </div>
     </section>
 
@@ -237,7 +229,6 @@
     <div id="toast">✅ IP 複製成功，快去加入吧！</div>
 
     <script>
-        // 複製功能與視覺效果
         function handleCopy(event, text) {
             navigator.clipboard.writeText(text);
             const card = event.currentTarget;
@@ -250,13 +241,11 @@
             const ripple = card.getElementsByClassName("ripple")[0];
             if (ripple) ripple.remove();
             card.appendChild(circle);
-
             const t = document.getElementById("toast");
             t.className = "show";
             setTimeout(() => t.className = "", 2500);
         }
 
-        // 即時狀態與頭像更新
         async function updateServerInfo() {
             const ip = "ryfn.falix.gg";
             const start = Date.now();
@@ -269,18 +258,20 @@
                     document.getElementById('live-status').innerText = '伺服器開啟中';
                     document.getElementById('live-status').style.color = '#3fb950';
                     document.getElementById('live-players').innerText = `${data.players.online} / ${data.players.max}`;
-                    document.getElementById('live-version').innerText = data.version.name_clean || "1.21.1";
                     document.getElementById('live-ping').innerText = `${ping} ms`;
 
-                    // 更新頭像牆
                     const pList = document.getElementById('player-list');
                     if (data.players.list && data.players.list.length > 0) {
-                        pList.innerHTML = data.players.list.map(p => `
-                            <div class="player-card">
-                                <img src="https://minotar.net/cube/${p.name_clean}/80.png" style="width:80px;">
-                                <div style="color:#3fb950; font-size:0.8rem; margin-top:5px;">${p.name_clean}</div>
-                            </div>
-                        `).join('');
+                        // 修復 Bug：確保優先抓取 name_clean，並使用正確的頭像網址
+                        pList.innerHTML = data.players.list.map(p => {
+                            const name = p.name_clean || p.name || "Unknown";
+                            return `
+                                <div class="player-card">
+                                    <img src="https://mc-heads.net/avatar/${name}/80" alt="${name}">
+                                    <div style="color:#3fb950; font-size:0.8rem; margin-top:8px; font-weight:bold;">${name}</div>
+                                </div>
+                            `;
+                        }).join('');
                     } else {
                         pList.innerHTML = '<div style="color:#8b949e;">目前沒有玩家在線</div>';
                     }
