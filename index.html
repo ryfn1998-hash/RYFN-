@@ -7,12 +7,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script>
     <style>
-        /* 這裡維持你原版的 CSS 設定 */
+        /* 全域設定 */
         html { scroll-behavior: smooth; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: #0d1117; color: #c9d1d9; font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif; line-height: 1.5; }
 
-        .navbar { background-color: #3fb950 !important; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; position: sticky; top: 0; z-index: 1000; }
+        /* 導覽列 */
+        .navbar {
+            background-color: #3fb950 !important;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
         .nav-left { display: flex; align-items: center; }
         .nav-right { display: flex; gap: 20px; }
         .nav-link { color: #000; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: 0.3s; }
@@ -20,25 +31,83 @@
         .cube-icon { font-size: 1.6rem; color: #000; margin-right: 12px; }
         .brand { color: #000; font-size: 1.3rem; font-weight: bold; }
 
-        .hero { padding: 80px 20px; text-align: center; background: radial-gradient(circle at 50% 50%, #1a2e1a 0%, #0d1117 100%); }
-        .copy-card { background: linear-gradient(145deg, #238636, #2ea043); border-radius: 12px; padding: 25px; width: 320px; margin: 20px auto; cursor: pointer; box-shadow: 0 0 30px rgba(63, 185, 80, 0.3); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; user-select: none; }
+        /* 主視覺區與複製卡片 */
+        .hero {
+            padding: 80px 20px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, #1a2e1a 0%, #0d1117 100%);
+        }
+        .copy-card {
+            background: linear-gradient(145deg, #238636, #2ea043);
+            border-radius: 12px;
+            padding: 25px;
+            width: 320px;
+            margin: 20px auto;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(63, 185, 80, 0.3);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
         .copy-card:active { transform: scale(0.92); filter: brightness(1.1); }
         .ip-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin: 10px 0; font-family: monospace; font-size: 1.2rem; color: #fff; }
+        
+        .ripple {
+            position: absolute; background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%; transform: scale(0);
+            animation: ripple-animation 0.6s linear; pointer-events: none;
+        }
+        @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
 
-        /* 數據中心區塊 */
-        .live-status-section { background-color: #0d1117; padding: 80px 5% 60px 5%; border-top: 1px solid #30363d; }
+        /* 通用網格系統 */
+        .grid-container {
+            background: #fff;
+            padding: 60px 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .item, .bot-item {
+            background: #fff; padding: 30px 20px; border-radius: 15px;
+            color: #1f2328; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center; transition: 0.3s; border: 1px solid #f0f0f0;
+        }
+        .item:hover, .bot-item:hover { transform: translateY(-5px); }
+        .item i { font-size: 2.5rem; color: #3fb950; margin-bottom: 20px; }
+        .bot-item i { font-size: 2.5rem; color: #5865f2; margin-bottom: 20px; }
+
+        /* 數據中心 */
+        .live-status-section {
+            background-color: #0d1117;
+            padding: 80px 5% 60px 5%;
+            border-top: 1px solid #30363d;
+        }
         .section-title { text-align: center; margin-bottom: 40px; }
         .section-title h2 { color: #fff; font-size: 1.8rem; margin-bottom: 10px; }
-        
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px; max-width: 1000px; margin: 0 auto;
+        }
         .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 25px; text-align: center; }
         .stat-value { font-size: 1.5rem; font-weight: bold; color: #3fb950; display: block; margin-top: 10px; }
 
-        #player-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1000px; margin: 30px auto; }
-        .player-card { text-align: center; background: #161b22; padding: 15px; border-radius: 10px; border: 1px solid #30363d; width: 130px; }
-        .player-card img { width: 80px; height: 80px; image-rendering: pixelated; }
+        /* 玩家頭像區塊 */
+        #player-list {
+            display: flex; flex-wrap: wrap; justify-content: center;
+            gap: 20px; max-width: 1000px; margin: 30px auto 30px auto;
+        }
+        .player-card {
+            text-align: center; background: #161b22; padding: 15px;
+            border-radius: 10px; border: 1px solid #30363d; width: 120px;
+            transition: 0.3s;
+        }
+        .player-card:hover { transform: scale(1.05); border-color: #3fb950; }
+        .player-card img { width: 80px; height: 80px; image-rendering: pixelated; border-radius: 5px; }
 
-        /* --- 新版 Discord 訊息同步區 (無側欄、無按鈕) --- */
+        /* Discord 訊息同步容器 (純訊息顯示) */
         .discord-messages-container {
             max-width: 1000px;
             margin: 0 auto 40px auto;
@@ -57,46 +126,85 @@
             align-items: center;
             gap: 10px;
         }
-        /* 針對渲染器的自定義高度 */
-        discord-messages {
-            width: 100%;
-            height: 450px;
-            background: #161b22;
-        }
+        discord-messages { width: 100%; height: 400px; background: transparent; }
 
+        /* 頁尾與懸浮按鈕 */
         .footer { background-color: #0d1117; padding: 60px 20px; text-align: center; border-top: 1px solid #30363d; }
-        #toast { visibility: hidden; background: #3fb950; color: #000; padding: 12px 25px; border-radius: 30px; position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); font-weight: bold; transition: 0.3s; }
-        #toast.show { visibility: visible; opacity: 1; }
+        .footer-icons { display: flex; justify-content: center; gap: 35px; margin-bottom: 30px; }
+        .footer-icons a { font-size: 3rem; transition: 0.3s; }
+        .footer-icons .fa-youtube { color: #ff0000; }
+        .footer-icons .fa-discord { color: #5865f2; }
+        
+        .float-btns { position: fixed; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 9999; }
+        .float-btn {
+            width: 55px; height: 55px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; color: #fff;
+            text-decoration: none; font-size: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;
+        }
+        .f-yt { background: #ff0000; }
+        .f-dc { background: #5865f2; }
+        .float-btn:hover { transform: scale(1.1); }
+
+        /* Toast 提示 */
+        #toast {
+            visibility: hidden; background: #3fb950; color: #000;
+            padding: 12px 25px; border-radius: 30px; position: fixed;
+            bottom: 50px; left: 50%; transform: translateX(-50%) translateY(20px);
+            font-weight: bold; z-index: 10000; opacity: 0; transition: all 0.3s ease;
+        }
+        #toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 768px) { .nav-right { display: none; } }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="nav-left"><i class="fas fa-cube cube-icon"></i><span class="brand">星河伺服器</span></div>
+        <div class="nav-left">
+            <i class="fas fa-cube cube-icon"></i>
+            <span class="brand">星河伺服器</span>
+        </div>
+        <div class="nav-right">
+            <a href="#features" class="nav-link">特色介紹</a>
+            <a href="#dashboard" class="nav-link">數據中心</a>
+            <a href="#bots" class="nav-link">機器人功能</a>
+        </div>
     </nav>
 
     <div class="hero">
         <h1>探索無限可能的方塊世界</h1>
-        <p style="color: #3fb950; font-weight: bold;">帝 國 永 續 發 展</p>
+        <p style="color: #3fb950; font-weight: bold; margin-top: 10px;">帝 國 永 續 發 展</p>
         <div class="copy-card" onclick="handleCopy(event, 'ryfn.falix.gg')">
             <strong>Java Edition (PC)</strong>
             <div class="ip-box">ryfn.falix.gg</div>
-            <p style="font-size:0.8rem;">點擊複製 IP</p>
+            <p style="font-size:0.8rem; opacity: 0.9;">點擊複製 IP 加入遊戲</p>
+        </div>
+    </div>
+
+    <div id="features" style="background: #fff;">
+        <div class="grid-container">
+            <div class="item"><i class="fas fa-map-marker-alt"></i><h3>TPA 玩家傳送</h3><p>簡單傳送指令，隨時與好友相聚。</p></div>
+            <div class="item"><i class="fas fa-user-check"></i><h3>高效反作弊</h3><p>全天候監控，保證公平競技環境。</p></div>
+            <div class="item"><i class="fas fa-network-wired"></i><h3>多版本相容</h3><p>支援 ViaVersion，跨版本自由連線。</p></div>
+            <div class="item"><i class="fab fa-discord"></i><h3>Discord 同步</h3><p>遊戲與 Discord 即時同步連動。</p></div>
+            <div class="item"><i class="fas fa-user-shield"></i><h3>離線登入系統</h3><p>完善驗證系統，享有安全保護。</p></div>
+            <div class="item"><i class="fas fa-tachometer-alt"></i><h3>穩定運行</h3><p>搭載專業主機，24/7 流暢體驗。</p></div>
         </div>
     </div>
 
     <section id="dashboard" class="live-status-section">
-        <div class="section-title"><h2>伺服器數據中心</h2></div>
+        <div class="section-title"><h2>伺服器數據中心</h2><p>即時監控運行參數與在線玩家</p></div>
         <div class="dashboard-grid">
-            <div class="stat-card"><span>運行狀態</span><span id="live-status" class="stat-value">讀取中...</span></div>
-            <div class="stat-card"><span>目前人數</span><span id="live-players" class="stat-value">0 / 0</span></div>
-            <div class="stat-card"><span>即時延遲</span><span id="live-ping" class="stat-value">-- ms</span></div>
+            <div class="stat-card"><span><i class="fas fa-signal"></i> 運行狀態</span><span id="live-status" class="stat-value">讀取中...</span></div>
+            <div class="stat-card"><span><i class="fas fa-users"></i> 目前人數</span><span id="live-players" class="stat-value">0 / 0</span></div>
+            <div class="stat-card"><span><i class="fas fa-code-branch"></i> 核心版本</span><span id="live-version" class="stat-value">1.21.1</span></div>
+            <div class="stat-card"><span><i class="fas fa-bolt"></i> 即時延遲</span><span id="live-ping" class="stat-value">-- ms</span></div>
         </div>
 
         <div id="player-list"></div>
 
         <div class="discord-messages-container">
-            <div class="discord-sync-header"><i class="fab fa-discord"></i> 公告對話同步</div>
+            <div class="discord-sync-header"><i class="fab fa-discord"></i> 近期公告訊息同步</div>
             <discord-messages 
                 server="1426193407130341408" 
                 channel="1471871257472532591">
@@ -104,45 +212,93 @@
         </div>
     </section>
 
+    <div id="bots" style="background: #f8f9fa;">
+        <div class="section-title" style="padding-top:60px;"><h2 style="color:#0d1117;">Discord 智能機器人</h2></div>
+        <div class="grid-container" style="background:transparent; padding-top: 20px;">
+            <div class="bot-item"><i class="fas fa-ghost"></i><h3>怪物追蹤</h3><p>實時查詢怪物數量。</p></div>
+            <div class="bot-item"><i class="fas fa-user-friends"></i><h3>在線玩家</h3><p>查看名單與遊玩時間。</p></div>
+            <div class="bot-item"><i class="fas fa-compass"></i><h3>範圍座標</h3><p>查詢附近玩家座標。</p></div>
+            <div class="bot-item"><i class="fas fa-chart-line"></i><h3>伺服器統計</h3><p>獲取詳細性能指標。</p></div>
+            <div class="bot-item"><i class="fas fa-map-marked-alt"></i><h3>即時地圖</h3><p>獲取網頁地圖連結。</p></div>
+            <div class="bot-item"><i class="fas fa-history"></i><h3>自動備份</h3><p>每日定時存檔零風險。</p></div>
+        </div>
+    </div>
+
+    <div class="float-btns">
+        <a href="https://youtube.com/@ryfn_falix_gg" target="_blank" class="float-btn f-yt"><i class="fab fa-youtube"></i></a>
+        <a href="https://discord.gg/3D49QtXgTK" target="_blank" class="float-btn f-dc"><i class="fab fa-discord"></i></a>
+    </div>
+
     <footer class="footer">
-        <p>© 2025-2026 星河伺服器. 版權所有.</p>
+        <div class="footer-icons">
+            <a href="https://youtube.com/@ryfn_falix_gg" target="_blank"><i class="fab fa-youtube"></i></a>
+            <a href="https://discord.gg/3D49QtXgTK" target="_blank"><i class="fab fa-discord"></i></a>
+        </div>
+        <p class="copyright">© 2025-2026 Minecraft | 星河伺服器. 版權所有.</p>
     </footer>
 
-    <div id="toast">✅ IP 複製成功！</div>
+    <div id="toast">✅ IP 複製成功，快去加入吧！</div>
 
     <script>
-        // 複製與 API 更新邏輯維持你的原版（已修正玩家 Bug）
+        // 複製功能與視覺效果
         function handleCopy(event, text) {
             navigator.clipboard.writeText(text);
-            document.getElementById("toast").classList.add("show");
-            setTimeout(() => document.getElementById("toast").classList.remove("show"), 2500);
+            const card = event.currentTarget;
+            const circle = document.createElement("span");
+            const diameter = Math.max(card.clientWidth, card.clientHeight);
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - card.offsetLeft - (diameter/2)}px`;
+            circle.style.top = `${event.clientY - card.offsetTop - (diameter/2)}px`;
+            circle.classList.add("ripple");
+            const ripple = card.getElementsByClassName("ripple")[0];
+            if (ripple) ripple.remove();
+            card.appendChild(circle);
+
+            const t = document.getElementById("toast");
+            t.className = "show";
+            setTimeout(() => t.className = "", 2500);
         }
 
+        // 即時狀態與頭像更新 (Bug 修復版)
         async function updateServerInfo() {
             const ip = "ryfn.falix.gg";
             const start = Date.now();
             try {
                 const res = await fetch(`https://api.mcstatus.io/v2/status/java/${ip}`);
                 const data = await res.json();
+                const ping = Date.now() - start;
+
                 if (data.online) {
                     document.getElementById('live-status').innerText = '伺服器開啟中';
+                    document.getElementById('live-status').style.color = '#3fb950';
                     document.getElementById('live-players').innerText = `${data.players.online} / ${data.players.max}`;
-                    document.getElementById('live-ping').innerText = `${Date.now() - start} ms`;
+                    document.getElementById('live-version').innerText = data.version.name_clean || "1.21.1";
+                    document.getElementById('live-ping').innerText = `${ping} ms`;
 
+                    // 更新頭像牆 - 修復 Bug
                     const pList = document.getElementById('player-list');
                     if (data.players.list && data.players.list.length > 0) {
-                        pList.innerHTML = data.players.list.map(p => `
-                            <div class="player-card">
-                                <img src="https://mc-heads.net/avatar/${p.name_clean || p.name}/80">
-                                <div style="color:#3fb950; font-size:0.85rem; margin-top:8px; font-weight:bold;">${p.name_clean || p.name}</div>
-                            </div>
-                        `).join('');
+                        pList.innerHTML = data.players.list.map(p => {
+                            // 排除 Anonymous 或無效名字
+                            const name = p.name_clean || p.name;
+                            if(!name || name.toLowerCase().includes('anonymous')) return '';
+                            return `
+                                <div class="player-card">
+                                    <img src="https://mc-heads.net/avatar/${name}/80" alt="${name}">
+                                    <div style="color:#3fb950; font-size:0.8rem; margin-top:5px; font-weight:bold;">${name}</div>
+                                </div>
+                            `;
+                        }).join('');
                     } else {
                         pList.innerHTML = '<div style="color:#8b949e;">目前沒有玩家在線</div>';
                     }
+                } else {
+                    document.getElementById('live-status').innerText = '伺服器維護中';
+                    document.getElementById('live-status').style.color = '#f85149';
                 }
             } catch (e) { console.error("API Error"); }
         }
+
         updateServerInfo();
         setInterval(updateServerInfo, 30000);
     </script>
