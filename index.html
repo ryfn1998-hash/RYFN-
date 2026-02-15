@@ -30,7 +30,7 @@
         .cube-icon { font-size: 1.6rem; color: #000; margin-right: 12px; }
         .brand { color: #000; font-size: 1.3rem; font-weight: bold; }
 
-        /* 主視覺區與複製卡片 */
+        /* 主視覺區 */
         .hero {
             padding: 80px 20px;
             text-align: center;
@@ -59,7 +59,7 @@
         }
         @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
 
-        /* 通用網格系統 */
+        /* 通用網格 */
         .grid-container {
             background: #fff;
             padding: 60px 5%;
@@ -93,7 +93,7 @@
         .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 25px; text-align: center; }
         .stat-value { font-size: 1.5rem; font-weight: bold; color: #3fb950; display: block; margin-top: 10px; }
 
-        /* 玩家頭像區塊修復 */
+        /* 玩家清單樣式 */
         #player-list {
             display: flex; flex-wrap: wrap; justify-content: center;
             gap: 20px; max-width: 1000px; margin: 30px auto 30px auto;
@@ -103,16 +103,18 @@
             border-radius: 10px; border: 1px solid #30363d; width: 130px;
             transition: 0.3s;
         }
-        .player-card img { width: 80px; height: 80px; image-rendering: pixelated; }
+        .player-card img { width: 80px; height: 80px; image-rendering: pixelated; border-radius: 4px; }
 
-        /* Discord 同步區塊修復 */
+        /* --- Discord 純訊息裁切區 --- */
         .discord-sync-box {
             max-width: 1000px;
             margin: 0 auto 40px auto;
             border: 1px solid #30363d;
             border-radius: 12px;
-            overflow: hidden;
+            overflow: hidden; /* 關鍵：裁切超出範圍的內容 */
             background: #161b22;
+            position: relative;
+            height: 400px;
         }
         .discord-sync-header {
             padding: 10px 15px;
@@ -121,9 +123,28 @@
             font-size: 0.9rem;
             font-weight: bold;
             color: #fff;
+            position: relative;
+            z-index: 10;
+        }
+        .discord-iframe-wrapper {
+            position: absolute;
+            top: 40px; /* 避開標頭 */
+            left: 0;
+            width: 100%;
+            height: calc(100% - 40px);
+            overflow: hidden;
+        }
+        .discord-iframe-wrapper iframe {
+            position: absolute;
+            /* 裁切技巧：向左位移隱藏側欄，寬度加大補足空間 */
+            top: -50px; /* 隱藏頂部頻道名稱欄 */
+            left: -60px; /* 隱藏左側伺服器列表 */
+            width: calc(100% + 60px); 
+            height: calc(100% + 120px); /* 底部預留更多空間隱藏輸入框 */
+            border: none;
         }
 
-        /* 頁尾與懸浮按鈕 */
+        /* 頁尾 */
         .footer { background-color: #0d1117; padding: 60px 20px; text-align: center; border-top: 1px solid #30363d; }
         .footer-icons { display: flex; justify-content: center; gap: 35px; margin-bottom: 30px; }
         .footer-icons a { font-size: 3rem; transition: 0.3s; }
@@ -140,7 +161,6 @@
         .f-dc { background: #5865f2; }
         .float-btn:hover { transform: scale(1.1); }
 
-        /* Toast 提示 */
         #toast {
             visibility: hidden; background: #3fb950; color: #000;
             padding: 12px 25px; border-radius: 30px; position: fixed;
@@ -196,8 +216,10 @@
         <div id="player-list"></div>
 
         <div class="discord-sync-box">
-            <div class="discord-sync-header"><i class="fab fa-discord"></i> 近期公告與對話同步</div>
-            <iframe src="https://e.widgetbot.io/channels/1426193407130341408/1469880403799314432" height="380" width="100%" frameborder="0"></iframe>
+            <div class="discord-sync-header"><i class="fab fa-discord"></i> 近期公告同步</div>
+            <div class="discord-iframe-wrapper">
+                <iframe src="https://e.widgetbot.io/channels/1426193407130341408/1471871257472532591"></iframe>
+            </div>
         </div>
     </section>
 
@@ -262,13 +284,13 @@
 
                     const pList = document.getElementById('player-list');
                     if (data.players.list && data.players.list.length > 0) {
-                        // 修復 Bug：確保優先抓取 name_clean，並使用正確的頭像網址
                         pList.innerHTML = data.players.list.map(p => {
-                            const name = p.name_clean || p.name || "Unknown";
+                            const name = p.name_clean || p.name;
+                            if (!name || name.toLowerCase().includes('anonymous')) return '';
                             return `
                                 <div class="player-card">
                                     <img src="https://mc-heads.net/avatar/${name}/80" alt="${name}">
-                                    <div style="color:#3fb950; font-size:0.8rem; margin-top:8px; font-weight:bold;">${name}</div>
+                                    <div style="color:#3fb950; font-size:0.85rem; margin-top:8px; font-weight:bold;">${name}</div>
                                 </div>
                             `;
                         }).join('');
@@ -281,7 +303,6 @@
                 }
             } catch (e) { console.error("API Error"); }
         }
-
         updateServerInfo();
         setInterval(updateServerInfo, 30000);
     </script>
