@@ -6,26 +6,34 @@
     <title>星河伺服器 - 帝國永續發展</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: #0d1117; color: #c9d1d9; font-family: sans-serif; }
+        /* 平滑捲動 */
+        html { scroll-behavior: smooth; }
 
-        /* 頂部亮綠色導覽列 */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #0d1117; color: #c9d1d9; font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif; line-height: 1.5; }
+
+        /* 導覽列 */
         .navbar {
             background-color: #3fb950 !important;
             height: 60px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0 5%;
             position: sticky;
             top: 0;
             z-index: 1000;
         }
+        .nav-left { display: flex; align-items: center; }
+        .nav-right { display: flex; gap: 20px; }
+        .nav-link { color: #000; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: 0.3s; }
+        .nav-link:hover { opacity: 0.6; }
         .cube-icon { font-size: 1.6rem; color: #000; margin-right: 12px; }
         .brand { color: #000; font-size: 1.3rem; font-weight: bold; }
 
         /* 主視覺區 */
         .hero {
-            padding: 60px 20px;
+            padding: 80px 20px 40px 20px;
             text-align: center;
             background: radial-gradient(circle at 50% 50%, #1a2e1a 0%, #0d1117 100%);
         }
@@ -36,86 +44,110 @@
             width: 320px;
             margin: 20px auto;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(63, 185, 80, 0.4);
+            box-shadow: 0 0 30px rgba(63, 185, 80, 0.3);
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
         }
-        .ip-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin: 10px 0; font-family: monospace; }
+        .copy-card:active { transform: scale(0.95); }
+        .ip-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin: 10px 0; font-family: 'Courier New', monospace; font-size: 1.2rem; color: #fff; }
 
-        /* --- 新增：環境資訊區塊樣式 --- */
-        .live-info {
-            background-color: #161b22;
-            padding: 30px 5%;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            border-top: 1px solid #30363d;
-            border-bottom: 1px solid #30363d;
-        }
-        .info-card {
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 10px;
-            padding: 15px 25px;
-            min-width: 180px;
-            text-align: center;
-        }
-        .info-label { color: #8b949e; font-size: 0.8rem; margin-bottom: 5px; display: block; }
-        .info-value { color: #3fb950; font-weight: bold; font-size: 1.1rem; }
-        .dim-box { display: flex; gap: 10px; justify-content: center; margin-top: 5px; font-size: 0.9rem; }
-        .dim-tag { padding: 2px 8px; border-radius: 4px; background: #21262d; }
-        /* --------------------------- */
-
-        /* 白色介紹區 */
-        .intro {
+        /* 特色/機器人 網格系統 */
+        .grid-container {
             background: #fff;
-            padding: 50px 5%;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            padding: 60px 5%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        .item {
+        .item, .bot-item {
             background: #fff;
-            padding: 30px;
-            width: 350px;
+            padding: 30px 20px;
             border-radius: 15px;
-            color: #333;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            color: #1f2328;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             text-align: center;
+            transition: 0.3s;
+            border: 1px solid #f0f0f0;
         }
-        .item i { font-size: 2.5rem; color: #3fb950; margin-bottom: 15px; }
+        .item i { font-size: 2.5rem; color: #3fb950; margin-bottom: 20px; }
+        .bot-item i { font-size: 2.5rem; color: #5865f2; margin-bottom: 20px; }
 
-        /* 右下角懸浮按鈕 */
+        /* 數據中心 */
+        .live-status-section {
+            background-color: #0d1117;
+            padding: 80px 5% 60px 5%;
+            border-top: 1px solid #30363d;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .section-title { text-align: center; margin-bottom: 40px; }
+        .section-title h2 { color: #fff; font-size: 1.8rem; margin-bottom: 10px; }
+        .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 25px; text-align: center; }
+        .stat-value { font-size: 1.5rem; font-weight: bold; color: #3fb950; display: block; margin-top: 10px; }
+
+        /* 頁尾 */
+        .footer {
+            background-color: #0d1117;
+            padding: 60px 20px;
+            text-align: center;
+            border-top: 1px solid #30363d;
+        }
+        .footer-icons { display: flex; justify-content: center; gap: 35px; margin-bottom: 30px; }
+        .footer-icons a { font-size: 3rem; transition: 0.3s; }
+        .footer-icons .fa-youtube { color: #ff0000; }
+        .footer-icons .fa-discord { color: #5865f2; }
+        .copyright { color: #484f58; font-size: 0.85rem; }
+
+        /* 右側懸浮按鈕 */
         .float-btns {
             position: fixed;
             bottom: 30px;
             right: 20px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             z-index: 9999;
         }
-        .btn {
-            width: 50px; height: 50px; border-radius: 50%;
+        .float-btn {
+            width: 55px; height: 55px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             color: #fff; text-decoration: none; font-size: 1.5rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: 0.3s;
         }
-        .yt { background: #ff0000; }
-        .dc { background: #5865f2; }
+        .f-yt { background: #ff0000; }
+        .f-dc { background: #5865f2; }
 
-        #toast {
-            visibility: hidden; background: #238636; color: #fff;
-            padding: 10px 20px; border-radius: 5px; position: fixed;
-            bottom: 40px; left: 50%; transform: translateX(-50%);
+        /* RWD */
+        @media (max-width: 768px) {
+            .nav-right { display: none; }
+            .grid-container { grid-template-columns: repeat(2, 1fr); gap: 15px; }
         }
+
+        #toast { visibility: hidden; background: #238636; color: #fff; padding: 12px 25px; border-radius: 8px; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 10000; }
         #toast.show { visibility: visible; }
     </style>
 </head>
 <body>
+
     <nav class="navbar">
-        <i class="fas fa-cube cube-icon"></i>
-        <span class="brand">星河伺服器</span>
+        <div class="nav-left">
+            <i class="fas fa-cube cube-icon"></i>
+            <span class="brand">星河伺服器</span>
+        </div>
+        <div class="nav-right">
+            <a href="#features" class="nav-link">特色介紹</a>
+            <a href="#dashboard" class="nav-link">數據中心</a>
+            <a href="#bots" class="nav-link">機器人功能</a>
+        </div>
     </nav>
 
     <div class="hero">
@@ -123,60 +155,103 @@
         <div class="copy-card" onclick="copyIP('ryfn.falix.gg')">
             <strong>Java Edition (PC)</strong>
             <div class="ip-box">ryfn.falix.gg</div>
-            <p style="font-size:0.8rem">點擊複製 IP</p>
+            <p style="font-size:0.8rem; opacity: 0.8;">點擊複製 IP 加入遊戲</p>
         </div>
     </div>
 
-    <div class="live-info">
-        <div class="info-card">
-            <span class="info-label"><i class="fas fa-clock"></i> 伺服器時間</span>
-            <span id="mc-time" class="info-value">06:00 AM</span>
+    <div id="features" style="background: #fff;">
+        <div class="grid-container">
+            <div class="item"><i class="fas fa-map-marker-alt"></i><h3>TPA 玩家傳送</h3><p>簡單的傳送指令，隨時與好友相聚。</p></div>
+            <div class="item"><i class="fas fa-user-check"></i><h3>高效反作弊</h3><p>全天候監控，保證公平競技環境。</p></div>
+            <div class="item"><i class="fas fa-network-wired"></i><h3>多版本相容</h3><p>支援 ViaVersion，跨版本自由連線。</p></div>
+            <div class="item"><i class="fab fa-discord"></i><h3>Discord 同步</h3><p>遊戲與 Discord 即時同步連動。</p></div>
+            <div class="item"><i class="fas fa-user-shield"></i><h3>離線登入系統</h3><p>完善驗證系統，享有安全保護。</p></div>
+            <div class="item"><i class="fas fa-tachometer-alt"></i><h3>穩定運行</h3><p>搭載專業主機，24/7 流暢體驗。</p></div>
         </div>
-        <div class="info-card">
-            <span class="info-label"><i class="fas fa-cloud-sun"></i> 當前天氣</span>
-            <span id="mc-weather" class="info-value">晴朗</span>
-        </div>
-        <div class="info-card">
-            <span class="info-label"><i class="fas fa-layer-group"></i> 各維度人數</span>
-            <div class="dim-box">
-                <div class="dim-tag">🌎 <span id="dim-overworld">0</span></div>
-                <div class="dim-tag">🔥 <span id="dim-nether">0</span></div>
-                <div class="dim-tag">🔮 <span id="dim-end">0</span></div>
+    </div>
+
+    <section id="dashboard" class="live-status-section">
+        <div class="section-title"><h2>伺服器數據中心</h2><p>即時監控星河伺服器的運行參數</p></div>
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <span style="color:#8b949e; font-size:0.9rem;"><i class="fas fa-signal"></i> 運行狀態</span>
+                <span id="live-status" class="stat-value">讀取中...</span>
+            </div>
+            <div class="stat-card">
+                <span style="color:#8b949e; font-size:0.9rem;"><i class="fas fa-users"></i> 目前人數</span>
+                <span id="live-players" class="stat-value">0 / 0</span>
+            </div>
+            <div class="stat-card">
+                <span style="color:#8b949e; font-size:0.9rem;"><i class="fas fa-code-branch"></i> 核心版本</span>
+                <span id="live-version" class="stat-value">1.21.1</span>
+            </div>
+            <div class="stat-card">
+                <span style="color:#8b949e; font-size:0.9rem;"><i class="fas fa-bolt"></i> 即時延遲</span>
+                <span id="live-ping" class="stat-value">-- ms</span>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="intro">
-        <div class="item"><i class="fas fa-shield-alt"></i><h3>穩定運行</h3><p>24/7 高品質服務</p></div>
-        <div class="item"><i class="fas fa-users"></i><h3>友好社群</h3><p>公平互助的環境</p></div>
+    <div id="bots" style="background: #f8f9fa;">
+        <div class="section-title" style="padding-top:40px;"><h2 style="color:#0d1117;">Discord 智能機器人</h2></div>
+        <div class="grid-container" style="background:transparent;">
+            <div class="bot-item"><i class="fas fa-ghost"></i><h3>怪物追蹤</h3><p>實時查詢怪物數量。</p></div>
+            <div class="bot-item"><i class="fas fa-user-friends"></i><h3>在線玩家</h3><p>查看名單與遊玩時間。</p></div>
+            <div class="bot-item"><i class="fas fa-compass"></i><h3>範圍座標</h3><p>查詢附近玩家座標。</p></div>
+            <div class="bot-item"><i class="fas fa-chart-line"></i><h3>伺服器統計</h3><p>獲取詳細性能指標。</p></div>
+            <div class="bot-item"><i class="fas fa-map-marked-alt"></i><h3>即時地圖</h3><p>獲取網頁地圖連結。</p></div>
+            <div class="bot-item"><i class="fas fa-history"></i><h3>自動備份</h3><p>每日定時存檔零風險。</p></div>
+        </div>
     </div>
 
     <div class="float-btns">
-        <a href="你的YT網址" class="btn yt"><i class="fab fa-youtube"></i></a>
-        <a href="你的DC網址" class="btn dc"><i class="fab fa-discord"></i></a>
+        <a href="https://youtube.com/@ryfn_falix_gg" target="_blank" class="float-btn f-yt"><i class="fab fa-youtube"></i></a>
+        <a href="https://discord.gg/3D49QtXgTK" target="_blank" class="float-btn f-dc"><i class="fab fa-discord"></i></a>
     </div>
 
-    <div id="toast">✅ IP 已複製！</div>
+    <footer class="footer">
+        <div class="footer-icons">
+            <a href="https://youtube.com/@ryfn_falix_gg" target="_blank"><i class="fab fa-youtube"></i></a>
+            <a href="https://discord.gg/3D49QtXgTK" target="_blank"><i class="fab fa-discord"></i></a>
+        </div>
+        <p class="copyright">© 2025-2026 Minecraft | 星河伺服器. 版權所有.</p>
+    </footer>
+
+    <div id="toast">✅ IP 已複製成功！</div>
 
     <script>
-        function copyIP(t){
-            navigator.clipboard.writeText(t);
-            var x=document.getElementById("toast");
-            x.className="show";
-            setTimeout(function(){x.className="";},2000);
+        function copyIP(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                var x = document.getElementById("toast");
+                x.className = "show";
+                setTimeout(function(){ x.className = ""; }, 2000);
+            });
         }
 
-        // 模擬即時資訊更新 (實際需連接伺服器 API)
-        function updateServerLiveStats() {
-            // 此處資訊通常需要搭配 PlaceholderAPI 與相關 Web 插件獲取
-            // 這裡先預設為模擬數值
-            document.getElementById('mc-time').innerText = "12:00 PM"; 
-            document.getElementById('mc-weather').innerText = "晴朗";
-            document.getElementById('dim-overworld').innerText = "0";
-            document.getElementById('dim-nether').innerText = "0";
-            document.getElementById('dim-end').innerText = "0";
+        async function updateLiveStatus() {
+            const ip = "ryfn.falix.gg";
+            const startTime = Date.now();
+            try {
+                const response = await fetch(`https://api.mcstatus.io/v2/status/java/${ip}`);
+                const data = await response.json();
+                const ping = Date.now() - startTime;
+
+                if (data.online) {
+                    document.getElementById('live-status').innerText = '伺服器開啟中';
+                    document.getElementById('live-status').style.color = '#3fb950';
+                    document.getElementById('live-players').innerText = `${data.players.online} / ${data.players.max}`;
+                    document.getElementById('live-version').innerText = data.version.name_clean || "1.21.1";
+                    document.getElementById('live-ping').innerText = `${ping} ms`;
+                } else {
+                    document.getElementById('live-status').innerText = '伺服器維護中';
+                    document.getElementById('live-status').style.color = '#f85149';
+                }
+            } catch (e) {
+                document.getElementById('live-status').innerText = '連線超時';
+            }
         }
-        setInterval(updateServerLiveStats, 30000);
+        updateLiveStatus();
+        setInterval(updateLiveStatus, 15000); // 每 15 秒自動刷新一次
     </script>
 </body>
 </html>
