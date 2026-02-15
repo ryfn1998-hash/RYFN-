@@ -9,6 +9,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: #0d1117; color: #c9d1d9; font-family: sans-serif; }
 
+        /* 頂部亮綠色導覽列 */
         .navbar {
             background-color: #3fb950 !important;
             height: 60px;
@@ -22,6 +23,7 @@
         .cube-icon { font-size: 1.6rem; color: #000; margin-right: 12px; }
         .brand { color: #000; font-size: 1.3rem; font-weight: bold; }
 
+        /* 主視覺區 */
         .hero {
             padding: 60px 20px;
             text-align: center;
@@ -38,29 +40,75 @@
         }
         .ip-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; margin: 10px 0; font-family: monospace; }
 
-        /* 精確新增：狀態顯示區（放在卡片下方） */
-        .status-display {
-            margin: 20px auto;
-            max-width: 400px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 15px;
-            border: 1px solid rgba(63, 185, 80, 0.3);
+        /* --- 新增：環境資訊區塊樣式 --- */
+        .live-info {
+            background-color: #161b22;
+            padding: 30px 5%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            border-top: 1px solid #30363d;
+            border-bottom: 1px solid #30363d;
         }
-        .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .status-p { display: flex; justify-content: space-around; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; font-size: 0.85rem; }
-        .stat-val { color: #3fb950; font-weight: bold; }
+        .info-card {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 15px 25px;
+            min-width: 180px;
+            text-align: center;
+        }
+        .info-label { color: #8b949e; font-size: 0.8rem; margin-bottom: 5px; display: block; }
+        .info-value { color: #3fb950; font-weight: bold; font-size: 1.1rem; }
+        .dim-box { display: flex; gap: 10px; justify-content: center; margin-top: 5px; font-size: 0.9rem; }
+        .dim-tag { padding: 2px 8px; border-radius: 4px; background: #21262d; }
+        /* --------------------------- */
 
-        .intro { background: #fff; padding: 50px 5%; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-        .item { background: #fff; padding: 30px; width: 350px; border-radius: 15px; color: #333; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; }
+        /* 白色介紹區 */
+        .intro {
+            background: #fff;
+            padding: 50px 5%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .item {
+            background: #fff;
+            padding: 30px;
+            width: 350px;
+            border-radius: 15px;
+            color: #333;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
         .item i { font-size: 2.5rem; color: #3fb950; margin-bottom: 15px; }
 
-        .float-btns { position: fixed; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 9999; }
-        .btn { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; font-size: 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        /* 右下角懸浮按鈕 */
+        .float-btns {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+        }
+        .btn {
+            width: 50px; height: 50px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; text-decoration: none; font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
         .yt { background: #ff0000; }
         .dc { background: #5865f2; }
 
-        #toast { visibility: hidden; background: #238636; color: #fff; padding: 10px 20px; border-radius: 5px; position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); }
+        #toast {
+            visibility: hidden; background: #238636; color: #fff;
+            padding: 10px 20px; border-radius: 5px; position: fixed;
+            bottom: 40px; left: 50%; transform: translateX(-50%);
+        }
         #toast.show { visibility: visible; }
     </style>
 </head>
@@ -69,6 +117,7 @@
         <i class="fas fa-cube cube-icon"></i>
         <span class="brand">星河伺服器</span>
     </nav>
+
     <div class="hero">
         <h1>探索無限可能的方塊世界</h1>
         <div class="copy-card" onclick="copyIP('ryfn.falix.gg')">
@@ -76,33 +125,37 @@
             <div class="ip-box">ryfn.falix.gg</div>
             <p style="font-size:0.8rem">點擊複製 IP</p>
         </div>
-
-        <div class="status-display">
-            <div class="status-grid">
-                <div><i class="fas fa-clock"></i> 時間: <span id="time" class="stat-val">-</span></div>
-                <div><i class="fas fa-cloud-sun"></i> 天氣: <span id="weather" class="stat-val">-</span></div>
-            </div>
-            <div class="status-p">
-                <span>主世界: <span id="p1" class="stat-val">0</span></span>
-                <span>地獄: <span id="p2" class="stat-val">0</span></span>
-                <span>終界: <span id="p3" class="stat-val">0</span></span>
-            </div>
-        </div>
     </div>
 
-    <div style="padding: 20px; background: #0d1117; text-align: center;">
-        <h2 style="color: #3fb950; margin-bottom: 15px;">衛星地圖</h2>
-        <iframe src="http://ryfn.falix.gg:20001/" width="90%" height="500px" style="border: 2px solid #3fb950; border-radius: 15px;"></iframe>
+    <div class="live-info">
+        <div class="info-card">
+            <span class="info-label"><i class="fas fa-clock"></i> 伺服器時間</span>
+            <span id="mc-time" class="info-value">06:00 AM</span>
+        </div>
+        <div class="info-card">
+            <span class="info-label"><i class="fas fa-cloud-sun"></i> 當前天氣</span>
+            <span id="mc-weather" class="info-value">晴朗</span>
+        </div>
+        <div class="info-card">
+            <span class="info-label"><i class="fas fa-layer-group"></i> 各維度人數</span>
+            <div class="dim-box">
+                <div class="dim-tag">🌎 <span id="dim-overworld">0</span></div>
+                <div class="dim-tag">🔥 <span id="dim-nether">0</span></div>
+                <div class="dim-tag">🔮 <span id="dim-end">0</span></div>
+            </div>
+        </div>
     </div>
 
     <div class="intro">
         <div class="item"><i class="fas fa-shield-alt"></i><h3>穩定運行</h3><p>24/7 高品質服務</p></div>
         <div class="item"><i class="fas fa-users"></i><h3>友好社群</h3><p>公平互助的環境</p></div>
     </div>
+
     <div class="float-btns">
         <a href="你的YT網址" class="btn yt"><i class="fab fa-youtube"></i></a>
         <a href="你的DC網址" class="btn dc"><i class="fab fa-discord"></i></a>
     </div>
+
     <div id="toast">✅ IP 已複製！</div>
 
     <script>
@@ -113,31 +166,17 @@
             setTimeout(function(){x.className="";},2000);
         }
 
-        async function updateStats() {
-            try {
-                // 從 Pl3xMap API 抓取資料
-                const sReq = await fetch("http://ryfn.falix.gg:20001/tiles/settings.json");
-                const sData = await sReq.json();
-                document.getElementById('time').innerText = sData.ui.clock || "未知";
-                
-                const pReq = await fetch("http://ryfn.falix.gg:20001/tiles/players.json");
-                const pData = await pReq.json();
-                let c = { ow: 0, ne: 0, en: 0 };
-                pData.forEach(p => {
-                    if(p.world.includes('nether')) c.ne++;
-                    else if(p.world.includes('the_end')) c.en++;
-                    else c.ow++;
-                });
-                document.getElementById('p1').innerText = c.ow;
-                document.getElementById('p2').innerText = c.ne;
-                document.getElementById('p3').innerText = c.en;
-                document.getElementById('weather').innerText = "晴天"; 
-            } catch (e) {
-                console.log("資料同步中...");
-            }
+        // 模擬即時資訊更新 (實際需連接伺服器 API)
+        function updateServerLiveStats() {
+            // 此處資訊通常需要搭配 PlaceholderAPI 與相關 Web 插件獲取
+            // 這裡先預設為模擬數值
+            document.getElementById('mc-time').innerText = "12:00 PM"; 
+            document.getElementById('mc-weather').innerText = "晴朗";
+            document.getElementById('dim-overworld').innerText = "0";
+            document.getElementById('dim-nether').innerText = "0";
+            document.getElementById('dim-end').innerText = "0";
         }
-        setInterval(updateStats, 10000);
-        updateStats();
+        setInterval(updateServerLiveStats, 30000);
     </script>
 </body>
 </html>
